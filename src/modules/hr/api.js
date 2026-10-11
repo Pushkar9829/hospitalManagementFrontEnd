@@ -18,6 +18,7 @@ const PAY = [
   'PaySettings',
   'PayGratuity',
   'PayBonus',
+  'PayTds',
 ];
 
 export const hrApi = baseApi
@@ -186,7 +187,7 @@ export const hrApi = baseApi
       paySettings: b.query({ query: () => '/payroll/settings', providesTags: ['PaySettings'] }),
       savePaySettings: b.mutation({
         query: (body) => put('/payroll/settings', body),
-        invalidatesTags: ['PaySettings'],
+        invalidatesTags: ['PaySettings', 'PayTds'],
       }),
       gratuity: b.query({
         query: (params = {}) => ({ url: '/payroll/gratuity', params: cleanParams(params) }),
@@ -196,6 +197,22 @@ export const hrApi = baseApi
       draftBonus: b.mutation({
         query: (body) => post('/payroll/bonus', body),
         invalidatesTags: ['PayBonus'],
+      }),
+      tdsYear: b.query({
+        query: (params) => ({ url: '/payroll/tds', params: cleanParams(params) }),
+        providesTags: ['PayTds'],
+      }),
+      recordChallan: b.mutation({
+        query: (body) => post('/payroll/tds/challans', body),
+        invalidatesTags: ['PayTds'],
+      }),
+      return24Q: b.query({
+        query: (params) => ({ url: '/payroll/tds/24q', params }),
+        providesTags: ['PayTds'],
+      }),
+      form16List: b.query({
+        query: (params) => ({ url: '/payroll/form16', params: cleanParams(params) }),
+        providesTags: ['PayTds'],
       }),
       payBonus: b.mutation({
         query: ({ id, version }) => post(`/payroll/bonus/${id}/pay`, { version }),
@@ -257,6 +274,10 @@ export const {
   useBonusRunsQuery,
   useDraftBonusMutation,
   usePayBonusMutation,
+  useTdsYearQuery,
+  useRecordChallanMutation,
+  useReturn24QQuery,
+  useForm16ListQuery,
 } = hrApi;
 
 /** Badge tones by status. */

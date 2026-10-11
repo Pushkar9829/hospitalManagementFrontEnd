@@ -19,6 +19,7 @@ import {
   useToast,
 } from '@hms/ui';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice.jsx';
+import { PdfPreviewDialog } from '../../../components/PdfPreviewDialog.jsx';
 import { inr } from '../../../lib/money.js';
 import { useCan } from '../../../lib/useCan.js';
 import { useStrings } from '../../../lib/useStrings.js';
@@ -198,6 +199,12 @@ function PayslipsTab() {
   const { t } = useTranslation();
   const q = useMyPayslipsQuery();
   const [open, setOpen] = useState('');
+  const [form16, setForm16] = useState(null);
+  const fyOf = (m) => {
+    const [y, mo] = m.split('-').map(Number);
+    const start = mo >= 4 ? y : y - 1;
+    return `${start}-${String((start + 1) % 100).padStart(2, '0')}`;
+  };
   return (
     <QueryView
       query={q}
@@ -206,22 +213,40 @@ function PayslipsTab() {
       isEmpty={(d) => !d.items.length}
     >
       {(d) => (
-        <ul className="flex flex-col gap-2">
-          {d.items.map((p) => (
-            <li key={p.id} className="rounded-control border border-line">
-              <button
-                type="button"
-                aria-expanded={open === p.id}
-                onClick={() => setOpen(open === p.id ? '' : p.id)}
-                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm"
-              >
-                <span className="font-semibold">{p.month}</span>
-                <span className="tabular">{t('me.pay.net', { amount: inr(p.net) })}</span>
-              </button>
-              {open === p.id && <Payslip slip={p} className="m-3 mt-0" />}
-            </li>
-          ))}
-        </ul>
+        <>
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            {[...new Set(d.items.map((p) => fyOf(p.month)))].map((fy) => (
+              <Button key={fy} size="sm" variant="secondary" onClick={() => setForm16(fy)}>
+                {t('me.pay.form16', { fy })}
+              </Button>
+            ))}
+          </div>
+          {form16 && (
+            <PdfPreviewDialog
+              open
+              onOpenChange={(o) => !o && setForm16(null)}
+              url={`/payroll/form16/me/pdf?fy=${form16}`}
+              title={t('me.pay.form16', { fy: form16 })}
+              number={`Form16-${form16}`}
+            />
+          )}
+          <ul className="flex flex-col gap-2">
+            {d.items.map((p) => (
+              <li key={p.id} className="rounded-control border border-line">
+                <button
+                  type="button"
+                  aria-expanded={open === p.id}
+                  onClick={() => setOpen(open === p.id ? '' : p.id)}
+                  className="flex w-full items-center justify-between px-3 py-2 text-left text-sm"
+                >
+                  <span className="font-semibold">{p.month}</span>
+                  <span className="tabular">{t('me.pay.net', { amount: inr(p.net) })}</span>
+                </button>
+                {open === p.id && <Payslip slip={p} className="m-3 mt-0" />}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </QueryView>
   );

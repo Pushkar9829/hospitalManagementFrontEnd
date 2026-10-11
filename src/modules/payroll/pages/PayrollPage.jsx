@@ -15,6 +15,7 @@ import {
   useToast,
 } from '@hms/ui';
 import { BonusTab, GratuityTab } from '../components/Benefits.jsx';
+import { TdsTab } from '../components/Tds.jsx';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice.jsx';
 import { PendingApprovalNotice } from '../../../components/PendingApprovalNotice.jsx';
 import { inr, paiseFrom, rupeesText } from '../../../lib/money.js';
@@ -513,6 +514,7 @@ export default function PayrollPage() {
         tabs={[
           { id: 'runs', label: t('pay.tabs.runs'), body: <RunsTab /> },
           { id: 'declarations', label: t('pay.decl.tab'), body: <DeclarationsTab /> },
+          { id: 'tds', label: t('pay.tds.tab'), body: <TdsTab /> },
           { id: 'gratuity', label: t('pay.gr.tab'), body: <GratuityTab /> },
           { id: 'bonus', label: t('pay.bn.tab'), body: <BonusTab /> },
           { id: 'settings', label: t('pay.tabs.settings'), body: <SettingsTab /> },

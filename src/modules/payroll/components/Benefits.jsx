@@ -17,7 +17,7 @@ import {
 const BONUS_TONE = { DRAFT: 'neutral', PENDING_APPROVAL: 'warning', PAID: 'success' };
 
 /** The financial year ("2025-26") that a date falls in. */
-export function fyOf(d = new Date()) {
+function fyOf(d = new Date()) {
   const ist = new Date(d.getTime() + 330 * 60_000);
   const y = ist.getUTCFullYear();
   const start = ist.getUTCMonth() >= 3 ? y : y - 1;

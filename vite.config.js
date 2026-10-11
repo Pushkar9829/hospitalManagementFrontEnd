@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { readFileSync } from 'node:fs';
 
 // The API resolves the hospital from the Host header, so the proxy keeps it (changeOrigin: false).
 // Open the app at http://demo.localhost:5173 for the "demo" hospital, and http://localhost:5173
@@ -14,11 +15,18 @@ const proxy = {
 // On Vercel the API sits behind a rewrite, which cannot carry websockets: use long-polling.
 const socketTransport = process.env.VITE_SOCKET_TRANSPORT || (process.env.VERCEL ? 'polling' : '');
 
+// `vite preview` sends the same security headers as Vercel (vercel.json), so a production build
+// can be checked against the Content-Security-Policy locally.
+const vercel = JSON.parse(readFileSync(new URL('./vercel.json', import.meta.url), 'utf8'));
+const securityHeaders = Object.fromEntries(
+  vercel.headers.find((h) => h.source === '/(.*)').headers.map((h) => [h.key, h.value]),
+);
+
 export default defineConfig({
   define: { 'import.meta.env.VITE_SOCKET_TRANSPORT': JSON.stringify(socketTransport) },
   plugins: [react(), ...(process.env.VITEST ? [] : [tailwindcss()])],
   server: { port: 5173, allowedHosts: ['.localhost'], proxy },
-  preview: { port: 4173, allowedHosts: ['.localhost'], proxy },
+  preview: { port: 4173, allowedHosts: ['.localhost'], proxy, headers: securityHeaders },
   build: {
     target: 'es2022',
     chunkSizeWarningLimit: 900,

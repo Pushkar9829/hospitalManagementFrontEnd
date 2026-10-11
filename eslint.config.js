@@ -20,7 +20,7 @@ export default [
     rules: { 'no-console': 'off' },
   },
   {
-    files: ['src/**/*.{js,jsx}', 'packages/ui/**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}', 'public/**/*.js', 'packages/ui/**/*.{js,jsx}'],
     languageOptions: {
       globals: { ...globals.browser },
       parserOptions: { ecmaFeatures: { jsx: true } },

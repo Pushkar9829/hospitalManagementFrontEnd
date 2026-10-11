@@ -7,6 +7,7 @@ import { createStore } from './app/store.js';
 import { createAppRouter } from './app/router.jsx';
 import { Providers } from './app/providers.jsx';
 import { storedLanguage } from './app/prefs-context.js';
+import { startErrorReporting } from './app/errorReporting.js';
 import './styles/app.css';
 
 const i18n = createI18n(storedLanguage(), { plugins: [initReactI18next] });
@@ -20,3 +21,5 @@ createRoot(document.getElementById('root')).render(
     </Providers>
   </StrictMode>,
 );
+
+startErrorReporting();

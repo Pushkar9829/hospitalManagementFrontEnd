@@ -12,7 +12,8 @@
     "e2e:smoke": "VITE_DEV_GALLERY=1 vite build && node e2e/smoke.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check . --end-of-line auto",
-    "sync:shared": "node scripts/sync-shared.mjs"
+    "sync:shared": "node scripts/sync-shared.mjs",
+    "hooks:install": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@hms/i18n": "0.1.0",
@@ -20,6 +21,7 @@
     "@hms/ui": "0.1.0",
     "@hookform/resolvers": "^5.9.1",
     "@reduxjs/toolkit": "^2.13.0",
+    "@sentry/react": "^9.47.2",
     "i18next": "^25.10.10",
     "lucide-react": "0.577.0",
     "react": "^19.3.0",

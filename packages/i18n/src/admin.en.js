@@ -802,6 +802,7 @@ export const adminModulesEn = {
       'reset-password': 'Reset password',
       'resend-invite': 'Resend invitation',
       'sign-out': 'Sign out everywhere',
+      'reset-two-factor': 'Reset two-factor',
     },
     actionDone: {
       deactivate: '{{name}} is deactivated',
@@ -810,6 +811,7 @@ export const adminModulesEn = {
       'reset-password': 'Temporary password set for {{name}}',
       'resend-invite': 'A new invitation was sent to {{name}}',
       'sign-out': '{{name}} was signed out on every device',
+      'reset-two-factor': 'Two-factor reset for {{name}}: they set it up again at the next sign-in',
     },
     confirm: {
       deactivate: {
@@ -823,6 +825,10 @@ export const adminModulesEn = {
       'sign-out': {
         title: 'Sign {{name}} out everywhere?',
         body: 'Every device is signed out. Unsaved work on those devices is kept there.',
+      },
+      'reset-two-factor': {
+        title: 'Reset two-factor for {{name}}?',
+        body: 'Use when their phone is lost or replaced. Their sessions cannot be renewed, and they must set up two-factor again before doing anything else. Give the reason; it goes in the audit log.',
       },
     },
     resetTitle: 'Reset password for {{name}}',

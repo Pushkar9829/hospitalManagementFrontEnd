@@ -40,13 +40,15 @@ const LIMIT = 25;
 const STATUSES = ['ACTIVE', 'PENDING_APPROVAL', 'INVITED', 'LOCKED', 'DISABLED'];
 
 /** What an admin can do to one login, by its state. */
-function rowActions(u, me) {
+function rowActions(u, me, superAdmin) {
   const locked = u.status === 'LOCKED' || Boolean(u.lockedUntil);
   return [
     u.status === 'INVITED' && 'resend-invite',
     locked && 'unlock',
     ['ACTIVE', 'LOCKED'].includes(u.status) && 'reset-password',
     ['ACTIVE', 'LOCKED'].includes(u.status) && u.id !== me && 'sign-out',
+    // Lost phone: only a Super Admin, and never on their own login.
+    superAdmin && u.twoFactorEnabled && u.id !== me && 'reset-two-factor',
     u.status === 'DISABLED' && 'activate',
     u.status !== 'DISABLED' && u.status !== 'PENDING_APPROVAL' && u.id !== me && 'deactivate',
   ].filter(Boolean);
@@ -205,7 +207,7 @@ export default function UsersPage() {
               header: <span className="sr-only">{t('common.actions')}</span>,
               meta: { align: 'right' },
               cell: ({ row }) => {
-                const actions = rowActions(row.original, me);
+                const actions = rowActions(row.original, me, can('*'));
                 if (!actions.length) return null;
                 return (
                   <span
@@ -362,16 +364,18 @@ export default function UsersPage() {
         description={c ? t(`users.confirm.${c.action}.body`) : undefined}
         confirmLabel={c ? t(`users.action.${c.action}`) : ''}
         destructive={c?.action !== 'activate'}
-        requireReason={c?.action === 'deactivate' ? true : null}
+        requireReason={['deactivate', 'reset-two-factor'].includes(c?.action) ? true : null}
         onConfirm={(reason) =>
           perform(
             c.user,
             c.action,
             c.action === 'deactivate'
               ? { version: c.user.version, reason }
-              : c.action === 'activate'
-                ? { version: c.user.version }
-                : undefined,
+              : c.action === 'reset-two-factor'
+                ? { reason }
+                : c.action === 'activate'
+                  ? { version: c.user.version }
+                  : undefined,
           )
         }
       />

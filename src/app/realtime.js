@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { io } from 'socket.io-client';
 import { baseApi } from './baseApi.js';
 
 /**
@@ -71,22 +70,29 @@ export function useRealtime(enabled = true) {
   useEffect(() => {
     // Tests and the preview layer have no socket server.
     if (!enabled || import.meta.env.MODE === 'test') return undefined;
-    const socket = io({
-      path: '/socket.io',
-      withCredentials: true,
-      transports: TRANSPORTS,
-      // Read by the API behind a Host-rewriting proxy; browsers send it with polling only.
-      extraHeaders: { 'x-hms-host': globalThis.location?.host ?? '' },
-    });
-    for (const [event, tags] of Object.entries(EVENT_TAGS))
-      socket.on(event, () => dispatch(baseApi.util.invalidateTags(tags)));
-    let connectedBefore = false;
-    socket.on('connect', () => {
-      if (connectedBefore) dispatch(baseApi.util.invalidateTags(ALL_LIVE));
-      connectedBefore = true;
+    // The socket client loads after sign-in, not with the first page (initial-JS budget).
+    let socket = null;
+    let closed = false;
+    import('socket.io-client').then(({ io }) => {
+      if (closed) return;
+      socket = io({
+        path: '/socket.io',
+        withCredentials: true,
+        transports: TRANSPORTS,
+        // Read by the API behind a Host-rewriting proxy; browsers send it with polling only.
+        extraHeaders: { 'x-hms-host': globalThis.location?.host ?? '' },
+      });
+      for (const [event, tags] of Object.entries(EVENT_TAGS))
+        socket.on(event, () => dispatch(baseApi.util.invalidateTags(tags)));
+      let connectedBefore = false;
+      socket.on('connect', () => {
+        if (connectedBefore) dispatch(baseApi.util.invalidateTags(ALL_LIVE));
+        connectedBefore = true;
+      });
     });
     return () => {
-      socket.disconnect();
+      closed = true;
+      socket?.disconnect();
     };
   }, [dispatch, enabled]);
 }

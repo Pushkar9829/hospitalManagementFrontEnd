@@ -1,11 +1,13 @@
 import { PANELS } from '@hms/shared/catalog';
+import { systemRolePermissions } from '@hms/shared';
 import { sessionSchema } from '@hms/shared/schemas';
 
 /** Sessions that conform to sessionSchema (validated here so the fixtures cannot drift). */
 export function makeSession({
   panel = 'superadmin',
   modules = ['OPD', 'IPD', 'LAB'],
-  permissions = PANELS[panel].permissions,
+  // What the system role really holds: panel menu, minus revocations, plus grants.
+  permissions = systemRolePermissions(panel),
   twoFactorSetupRequired = false,
   mustChangePassword = false,
   branches = [{ id: '64b000000000000000000001', name: 'Main Branch' }],

@@ -78,7 +78,13 @@ export const inventoryHi = {
       X: 'शेड्यूल X',
       NARCOTIC: 'नारकोटिक',
     },
-    kind: { DRUG: 'दवा', CONSUMABLE: 'उपभोग्य', REAGENT: 'रीएजेंट', GENERAL: 'सामान्य' },
+    kind: {
+      DRUG: 'दवा',
+      CONSUMABLE: 'उपभोग्य',
+      REAGENT: 'रीएजेंट',
+      GENERAL: 'सामान्य',
+      FOOD: 'खाद्य (रसोई)',
+    },
     col: {
       item: 'सामान',
       qty: 'उपयोग योग्य स्टॉक',

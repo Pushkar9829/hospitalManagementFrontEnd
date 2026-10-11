@@ -1177,7 +1177,7 @@ function ItemsTab() {
               <Select
                 value={f.kind}
                 onChange={set('kind')}
-                options={['DRUG', 'CONSUMABLE', 'REAGENT', 'GENERAL'].map((k) => ({
+                options={['DRUG', 'CONSUMABLE', 'REAGENT', 'GENERAL', 'FOOD'].map((k) => ({
                   value: k,
                   label: t(`inv.kind.${k}`),
                 }))}

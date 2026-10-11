@@ -43,6 +43,7 @@ import {
   useSetNbmMutation,
 } from '../api.js';
 import { BillingTab, MenuTab } from '../components/DietMaster.jsx';
+import { KitchenTab } from '../components/Kitchen.jsx';
 
 const todayIST = () => new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 10);
 const timeIST = (d) =>
@@ -771,6 +772,11 @@ export default function DietPage() {
               { id: 'missed', label: t('diet.tabs.missed'), body: <MissedTab /> },
               { id: 'menu', label: t('diet.master.tab'), body: <MenuTab settings={s} /> },
               { id: 'billing', label: t('diet.bill.tab'), body: <BillingTab /> },
+              {
+                id: 'kitchen',
+                label: t('diet.kit.tab'),
+                body: <KitchenTab settings={s} />,
+              },
               {
                 id: 'settings',
                 label: t('diet.tabs.settings'),

@@ -78,7 +78,13 @@ export const inventoryEn = {
       X: 'Schedule X',
       NARCOTIC: 'Narcotic',
     },
-    kind: { DRUG: 'Medicine', CONSUMABLE: 'Consumable', REAGENT: 'Reagent', GENERAL: 'General' },
+    kind: {
+      DRUG: 'Medicine',
+      CONSUMABLE: 'Consumable',
+      REAGENT: 'Reagent',
+      GENERAL: 'General',
+      FOOD: 'Food (kitchen)',
+    },
     col: {
       item: 'Item',
       qty: 'Usable stock',

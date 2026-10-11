@@ -10,11 +10,26 @@ const TAGS = [
   'DietTrays',
   'DietMissed',
   'DietNotes',
+  'DietKitchen',
 ];
 const LIVE = ['DietOrders', 'DietProduction', 'DietTrays', 'DietMissed'];
 
 export const dietApi = baseApi.enhanceEndpoints({ addTagTypes: TAGS }).injectEndpoints({
   endpoints: (b) => ({
+    // Kitchen stock costing: food used from the kitchen store against trays served.
+    kitchenStock: b.query({ query: () => '/diet/kitchen/stock', providesTags: ['DietKitchen'] }),
+    kitchenConsumption: b.query({
+      query: (params) => ({ url: '/diet/kitchen/consumption', params: cleanParams(params) }),
+      providesTags: ['DietKitchen'],
+    }),
+    recordConsumption: b.mutation({
+      query: (body) => ({ url: '/diet/kitchen/consumption', method: 'POST', body }),
+      invalidatesTags: ['DietKitchen'],
+    }),
+    kitchenCosting: b.query({
+      query: (params) => ({ url: '/diet/kitchen/costing', params: cleanParams(params) }),
+      providesTags: ['DietKitchen'],
+    }),
     dietSettings: b.query({ query: () => '/diet/settings', providesTags: ['DietSettings'] }),
     saveDietSettings: b.mutation({
       query: (body) => ({ url: '/diet/settings', method: 'PUT', body }),
@@ -89,6 +104,10 @@ export const dietApi = baseApi.enhanceEndpoints({ addTagTypes: TAGS }).injectEnd
 });
 
 export const {
+  useKitchenStockQuery,
+  useKitchenConsumptionQuery,
+  useRecordConsumptionMutation,
+  useKitchenCostingQuery,
   useDietSettingsQuery,
   useSaveDietSettingsMutation,
   useDietOrdersQuery,

@@ -11,6 +11,7 @@ const TAGS = [
   'MrdReleases',
   'MrdRegisters',
   'MrdStats',
+  'MrdRetention',
 ];
 
 export const mrdApi = baseApi.enhanceEndpoints({ addTagTypes: TAGS }).injectEndpoints({
@@ -74,6 +75,21 @@ export const mrdApi = baseApi.enhanceEndpoints({ addTagTypes: TAGS }).injectEndp
       query: ({ id, ...body }) => post(`/mrd/deaths/${id}/handover`, body),
       invalidatesTags: ['MrdRegisters'],
     }),
+    // Retention and destruction (Medical Superintendent, then Super Admin approve a batch).
+    retentionDue: b.query({ query: () => '/mrd/retention-due', providesTags: ['MrdRetention'] }),
+    destructions: b.query({ query: () => '/mrd/destructions', providesTags: ['MrdRetention'] }),
+    proposeDestruction: b.mutation({
+      query: (body) => post('/mrd/destructions', body),
+      invalidatesTags: ['MrdRetention', 'Approvals', 'ApprovalCount'],
+    }),
+    recordDestroyed: b.mutation({
+      query: ({ id, ...body }) => post(`/mrd/destructions/${id}/destroyed`, body),
+      invalidatesTags: ['MrdRetention', 'MrdRecords'],
+    }),
+    legalHold: b.mutation({
+      query: ({ id, ...body }) => ({ url: `/mrd/records/${id}/legal-hold`, method: 'PUT', body }),
+      invalidatesTags: ['MrdRetention', 'MrdRecord'],
+    }),
     mrdStatistics: b.query({
       query: (month) => ({ url: '/mrd/statistics', params: { month } }),
       providesTags: ['MrdStats'],
@@ -103,6 +119,11 @@ export const {
   useMarkReportedMutation,
   useHandoverBodyMutation,
   useMrdStatisticsQuery,
+  useRetentionDueQuery,
+  useDestructionsQuery,
+  useProposeDestructionMutation,
+  useRecordDestroyedMutation,
+  useLegalHoldMutation,
 } = mrdApi;
 
 export const RECORD_TONE = { DEFICIENT: 'warning', CODING: 'info', CLOSED: 'success' };

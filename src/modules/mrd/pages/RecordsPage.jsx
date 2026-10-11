@@ -26,6 +26,7 @@ import { QueryView } from '../../dx-kit/QueryView.jsx';
 import { UrlTabs } from '../../dx-kit/UrlTabs.jsx';
 import { fmtDate } from '../../dx-kit/format.js';
 import { PatientPicker } from '../../patients/components/PatientPicker.jsx';
+import { RetentionTab } from '../components/RetentionTab.jsx';
 import {
   RECORD_TONE,
   RELEASE_TONE,
@@ -883,6 +884,11 @@ export default function RecordsPage() {
             body: <RegistersTab />,
           },
           { id: 'stats', label: t('mrd.tabs.stats'), body: <StatisticsTab /> },
+          can('mrd:record:update') && {
+            id: 'retention',
+            label: t('mrd.tabs.retention'),
+            body: <RetentionTab />,
+          },
         ]}
       />
     </Page>

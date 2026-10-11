@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { ArrowLeft } from 'lucide-react';
-import { MODULE_CODES, MODULES } from '@hms/shared';
+import { GST_STATES, MODULE_CODES, MODULES } from '@hms/shared';
 import { addConsoleStrings } from '@hms/i18n/console';
 import { Button, Card, DataTable, Page, PageHeader, StatusBadge, useToast } from '@hms/ui';
 import { inr, paiseFrom } from '../../../lib/money.js';
@@ -17,6 +17,7 @@ import {
   usePlatformTenantQuery,
   useSetTenantPlanMutation,
   useTenantStatusMutation,
+  useSetTenantBillingMutation,
 } from '../api.js';
 import { InvoiceStatusBadge, TenantStatusBadge } from '../components/Badges.jsx';
 import { fmtDate, fmtDateTime, localeOf, tenantAddress } from '../format.js';
@@ -82,6 +83,8 @@ export default function TenantPage() {
   const [statusAction, setStatusAction] = useState(null);
   const [planOpen, setPlanOpen] = useState(false);
   const [setStatus] = useTenantStatusMutation();
+  const [setBilling] = useSetTenantBillingMutation();
+  const [billingOpen, setBillingOpen] = useState(false);
   const [setPlan] = useSetTenantPlanMutation();
 
   return (
@@ -115,6 +118,21 @@ export default function TenantPage() {
               id: 'total',
               header: t('console.inv.total'),
               cell: ({ row }) => <span className="tabular">{inr(row.original.total)}</span>,
+            },
+            {
+              id: 'tax',
+              header: t('console.ten.tax'),
+              cell: ({ row }) => {
+                const tx = row.original.tax;
+                if (!tx) return <span className="tabular">{inr(row.original.gst)}</span>;
+                return (
+                  <span className="tabular">
+                    {tx.kind === 'INTER'
+                      ? t('console.ten.igst', { amount: inr(tx.igst) })
+                      : t('console.ten.cgstSgst', { cgst: inr(tx.cgst), sgst: inr(tx.sgst) })}
+                  </span>
+                );
+              },
             },
             {
               id: 'status',
@@ -250,6 +268,31 @@ export default function TenantPage() {
                   </ul>
                 </Card>
               </div>
+              <Card
+                title={t('console.ten.billing')}
+                className="mt-4"
+                actions={
+                  can('platform:tenant:update') && (
+                    <Button size="sm" variant="secondary" onClick={() => setBillingOpen(true)}>
+                      {t('console.ten.editBilling')}
+                    </Button>
+                  )
+                }
+              >
+                <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-4">
+                  {[
+                    ['legalName', x.billing?.legalName ?? x.name],
+                    ['gstin', x.billing?.gstin],
+                    ['state', x.billing?.state],
+                    ['city', x.billing?.city],
+                  ].map(([k, v]) => (
+                    <div key={k}>
+                      <dt className="text-sm text-muted">{t(`console.ten.b.${k}`)}</dt>
+                      <dd className={k === 'gstin' ? 'font-mono' : undefined}>{v || '—'}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Card>
               <Card title={t('console.ten.invoices')} className="mt-4" padding={false}>
                 <DataTable
                   columns={invoiceColumns}
@@ -259,6 +302,62 @@ export default function TenantPage() {
                 />
               </Card>
 
+              <FormDialog
+                open={billingOpen}
+                onOpenChange={setBillingOpen}
+                title={t('console.ten.editBilling')}
+                description={t('console.ten.billingHint')}
+                schema={z.object({
+                  legalName: z.string().trim().min(3).max(160),
+                  gstin: z
+                    .string()
+                    .trim()
+                    .regex(
+                      /^(\d{2}[A-Za-z]{5}\d{4}[A-Za-z][0-9A-Za-z]Z[0-9A-Za-z])?$/,
+                      t('console.ten.gstinError'),
+                    ),
+                  state: z.string(),
+                  city: z.string().max(80).optional(),
+                })}
+                defaultValues={{
+                  legalName: x.billing?.legalName ?? x.name,
+                  gstin: x.billing?.gstin ?? '',
+                  state: x.billing?.state ?? '',
+                  city: x.billing?.city ?? '',
+                }}
+                fields={[
+                  {
+                    name: 'legalName',
+                    label: t('console.ten.b.legalName'),
+                    required: true,
+                    span: 2,
+                  },
+                  { name: 'gstin', label: t('console.ten.b.gstin'), optional: true, mono: true },
+                  {
+                    name: 'state',
+                    label: t('console.ten.b.state'),
+                    type: 'select',
+                    options: [
+                      { value: '', label: '' },
+                      ...Object.values(GST_STATES)
+                        .sort()
+                        .map((n) => ({ value: n, label: n })),
+                    ],
+                  },
+                  { name: 'city', label: t('console.ten.b.city'), optional: true },
+                ]}
+                submitLabel={t('console.ten.saveBilling')}
+                onSubmit={(v) =>
+                  setBilling({
+                    id: x.id,
+                    legalName: v.legalName,
+                    gstin: v.gstin.toUpperCase(),
+                    ...(v.state ? { state: v.state } : {}),
+                    ...(v.city ? { city: v.city } : {}),
+                  }).unwrap()
+                }
+                onDone={() => toast({ tone: 'success', title: t('console.ten.billingSaved') })}
+              />
               <FormDialog
                 open={Boolean(statusAction)}
                 onOpenChange={(o) => !o && setStatusAction(null)}

@@ -133,6 +133,22 @@ export const consoleEn = {
       priceVersion: 'Price book version {{v}}',
     },
     ten: {
+      tax: 'GST',
+      igst: 'IGST {{amount}}',
+      cgstSgst: 'CGST {{cgst}} + SGST {{sgst}}',
+      billing: 'Billing details',
+      editBilling: 'Edit billing details',
+      billingHint:
+        'Printed on platform invoices. A hospital in another state than ours is charged IGST; in the same state, CGST and SGST.',
+      saveBilling: 'Save billing details',
+      billingSaved: 'Billing details saved',
+      gstinError: 'Enter a 15-character GSTIN',
+      b: {
+        legalName: 'Legal name',
+        gstin: 'GSTIN',
+        state: 'State (place of supply)',
+        city: 'City',
+      },
       title: 'Hospitals',
       description: 'Every hospital on the platform: plan, modules and state.',
       trialsTitle: 'Trials',

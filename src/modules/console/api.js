@@ -62,6 +62,11 @@ export const consoleApi = baseApi.injectEndpoints({
       query: ({ id, ...body }) => ({ url: u(`/tenants/${id}/status`), method: 'POST', body }),
       invalidatesTags: ['PlatformTenants', 'PlatformInsights'],
     }),
+    /** Legal name, GSTIN, state (place of supply) and city on platform invoices. */
+    setTenantBilling: b.mutation({
+      query: ({ id, ...body }) => ({ url: u(`/tenants/${id}/billing`), method: 'PUT', body }),
+      invalidatesTags: ['PlatformTenants'],
+    }),
     setTenantPlan: b.mutation({
       query: ({ id, ...body }) => ({ url: u(`/tenants/${id}/subscription`), method: 'POST', body }),
       invalidatesTags: ['PlatformTenants', 'PlatformInvoices'],
@@ -195,6 +200,7 @@ export const {
   usePlatformTenantsQuery,
   usePlatformTenantQuery,
   useTenantStatusMutation,
+  useSetTenantBillingMutation,
   useSetTenantPlanMutation,
   usePlatformInvoicesQuery,
   useRecordInvoicePaymentMutation,

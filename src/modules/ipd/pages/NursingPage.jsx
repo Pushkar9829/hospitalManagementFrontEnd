@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { addIpdStrings } from '@hms/i18n/ipd';
@@ -600,6 +600,15 @@ function PatientPanel({ admissionId }) {
  * and late, fluid balance, overdue assessments) and, for the picked patient, the MAR, vitals,
  * intake-output and nursing notes. /nursing/all picks the ward first.
  */
+const LAST_WARD = 'hms.nursing.lastWard';
+const safeStorage = (fn) => {
+  try {
+    return fn();
+  } catch {
+    return null;
+  }
+};
+
 export default function NursingPage() {
   useStrings(addPatientsStrings, addDxkitStrings, addIpdStrings);
   const { t } = useTranslation();
@@ -612,6 +621,20 @@ export default function NursingPage() {
   const items = census.data?.items ?? [];
   const current = patient || items[0]?.admissionId || '';
   const ward = wards.data?.items.find((w) => w.id === real);
+  // Opening the station from the menu goes straight to the ward the nurse used last (once per
+  // visit to the app, so the list of wards stays reachable).
+  useEffect(() => {
+    if (real) {
+      safeStorage(() => localStorage.setItem(LAST_WARD, real));
+      return;
+    }
+    const last = safeStorage(() => localStorage.getItem(LAST_WARD));
+    const shown = safeStorage(() => sessionStorage.getItem(LAST_WARD));
+    if (last && !shown && wards.data?.items.some((w) => w.id === last)) {
+      safeStorage(() => sessionStorage.setItem(LAST_WARD, '1'));
+      navigate(`/nursing/${last}`, { replace: true });
+    }
+  }, [real, wards.data, navigate]);
   return (
     <Page>
       <PageHeader

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, DataTable, FormField, Input, StatusBadge, useToast } from '@hms/ui';
+import { Button, DataTable, FormField, Input, Select, StatusBadge, useToast } from '@hms/ui';
+import { fyOf, fyOptions } from './fy.js';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice.jsx';
 import { PendingApprovalNotice } from '../../../components/PendingApprovalNotice.jsx';
 import { inr, paiseFrom } from '../../../lib/money.js';
@@ -15,14 +16,6 @@ import {
 } from '../../hr/api.js';
 
 const BONUS_TONE = { DRAFT: 'neutral', PENDING_APPROVAL: 'warning', PAID: 'success' };
-
-/** The financial year ("2025-26") that a date falls in. */
-function fyOf(d = new Date()) {
-  const ist = new Date(d.getTime() + 330 * 60_000);
-  const y = ist.getUTCFullYear();
-  const start = ist.getUTCMonth() >= 3 ? y : y - 1;
-  return `${start}-${String((start + 1) % 100).padStart(2, '0')}`;
-}
 
 /** Gratuity register: what each employee has earned so far and whether it is payable now. */
 export function GratuityTab() {
@@ -116,7 +109,11 @@ export function BonusTab() {
       {edit && (
         <div className="flex flex-wrap items-end gap-3">
           <FormField label={t('pay.bn.fy')}>
-            <Input value={f.fy} onChange={(e) => setF({ ...f, fy: e.target.value })} />
+            <Select
+              value={f.fy}
+              onChange={(e) => setF({ ...f, fy: e.target.value })}
+              options={fyOptions()}
+            />
           </FormField>
           <FormField label={t('pay.bn.percent')}>
             <Input

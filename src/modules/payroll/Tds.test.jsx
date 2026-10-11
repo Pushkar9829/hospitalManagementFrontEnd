@@ -87,11 +87,10 @@ describe('TDS and Form 16', () => {
     renderApp('/payroll?tab=tds');
     const user = userEvent.setup();
     const fy = await screen.findByLabelText('Financial year');
-    await user.clear(fy);
-    await user.type(fy, '2024-25');
+    await user.selectOptions(fy, '2024-25');
 
     const months = await screen.findByRole('table', { name: 'TDS by month' });
-    const april = within(months).getByText('2024-04').closest('tr');
+    const april = within(months).getByText('Apr 2024').closest('tr');
     expect(within(april).getByText('₹20,000 short')).toBeVisible();
     await user.click(within(april).getByRole('button', { name: 'Record challan' }));
     await user.type(screen.getByLabelText(/BSR code/), '0510308');

@@ -97,8 +97,7 @@ describe('Gratuity and bonus', () => {
     const user = userEvent.setup();
     await screen.findByText('No bonus worked out yet');
     const fy = screen.getByLabelText('Financial year');
-    await user.clear(fy);
-    await user.type(fy, '2026-27');
+    await user.selectOptions(fy, '2026-27');
     await user.click(screen.getByRole('button', { name: 'Work out bonus' }));
     const table = await screen.findByRole('table', { name: 'Bonus by employee 2026-27' });
     expect(within(table).getByText('Anil Rao').closest('tr')).toHaveTextContent('₹5,831');

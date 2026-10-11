@@ -149,7 +149,7 @@ export default function RegisterPatientPage() {
           <ApiErrorNotice error={failure} />
           <form onSubmit={submit(false)} noValidate className="flex flex-col gap-4">
             <PatientForm form={form} canUpload={can('patients:patient:update')} />
-            <div className="sticky bottom-0 -mx-4 flex flex-wrap justify-end gap-2 border-t border-line bg-ground/95 px-4 py-3 md:-mx-6 md:px-6">
+            <div className="sticky bottom-0 -mx-4 flex flex-wrap justify-end gap-2 border-t border-line bg-ground px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] md:-mx-6 md:px-6">
               <Button variant="secondary" onClick={() => navigate('/patients')}>
                 {t('common.cancel')}
               </Button>

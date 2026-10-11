@@ -1,7 +1,19 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { Banner, Button, Card, DataTable, FormField, Input, StatusBadge, useToast } from '@hms/ui';
+import {
+  Banner,
+  Button,
+  Card,
+  DataTable,
+  FormField,
+  Input,
+  Select,
+  StatusBadge,
+  useToast,
+} from '@hms/ui';
+import { fmtMonth, localeOf } from '../../dx-kit/format.js';
+import { fyOf, fyOptions } from './fy.js';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice.jsx';
 import { PdfPreviewDialog } from '../../../components/PdfPreviewDialog.jsx';
 import { inr, paiseFrom, rupeesText } from '../../../lib/money.js';
@@ -18,11 +30,6 @@ import {
   useTdsYearQuery,
 } from '../../hr/api.js';
 
-const thisFy = () => {
-  const ist = new Date(Date.now() + 330 * 60_000);
-  const start = ist.getUTCMonth() >= 3 ? ist.getUTCFullYear() : ist.getUTCFullYear() - 1;
-  return `${start}-${String((start + 1) % 100).padStart(2, '0')}`;
-};
 const DEDUCTOR = ['name', 'tan', 'pan', 'address', 'responsibleName', 'responsibleDesignation'];
 
 /** The employer's TAN and the person who signs Form 16 (payroll settings, deductor). */
@@ -75,7 +82,7 @@ function DeductorCard() {
 
 /** Month by month: TDS deducted, the challan that deposited it, short or late. */
 function MonthsCard({ fy }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const can = useCan();
   const { toast } = useToast();
   const q = useTdsYearQuery({ fy });
@@ -89,7 +96,11 @@ function MonthsCard({ fy }) {
             caption={t('pay.tds.months')}
             data={d.months}
             columns={[
-              { id: 'month', header: t('pay.tds.month'), cell: ({ row }) => row.original.month },
+              {
+                id: 'month',
+                header: t('pay.tds.month'),
+                cell: ({ row }) => fmtMonth(`${row.original.month}-01`, localeOf(i18n)),
+              },
               {
                 id: 'tds',
                 header: t('pay.tds.deducted'),
@@ -332,12 +343,12 @@ function Form16Card({ fy }) {
 /** Salary TDS: the deductor, monthly challans, the quarterly 24Q and Form 16. */
 export function TdsTab() {
   const { t } = useTranslation();
-  const [fy, setFy] = useState(thisFy());
+  const [fy, setFy] = useState(fyOf());
   const valid = /^\d{4}-\d{2}$/.test(fy);
   return (
     <div className="flex flex-col gap-4">
       <FormField label={t('pay.bn.fy')} className="max-w-xs">
-        <Input value={fy} onChange={(e) => setFy(e.target.value.trim())} />
+        <Select value={fy} onChange={(e) => setFy(e.target.value)} options={fyOptions()} />
       </FormField>
       <DeductorCard />
       {valid && (

@@ -48,7 +48,8 @@ export default function RegisterPatientPage() {
   const navigate = useNavigate();
   const can = useCan();
   const [params] = useSearchParams();
-  const [type, setType] = useUrlState('type', 'full');
+  // Quick registration first: the front desk needs only name, gender, age and mobile.
+  const [type, setType] = useUrlState('type', 'quick');
   const [register, { isLoading: saving }] = useRegisterPatientMutation();
   const [key, renewKey] = useIdempotencyKey();
   const [failure, setFailure] = useState(null);

@@ -22,10 +22,16 @@ export function PickList({ items, selectedId, onPick, label, className }) {
                 on ? 'border-primary bg-info-bg' : 'border-transparent hover:bg-surface-2',
               )}
             >
-              {it.lead && <span className="w-28 shrink-0 font-mono text-sm">{it.lead}</span>}
+              {it.lead && (
+                <span className="w-20 shrink-0 font-mono text-sm sm:w-28">{it.lead}</span>
+              )}
               <span className="min-w-0 flex-1">
-                <strong className="block truncate font-semibold text-ink">{it.title}</strong>
-                {it.sub && <span className="block truncate text-sm text-muted">{it.sub}</span>}
+                <strong className="block font-semibold break-words text-ink">{it.title}</strong>
+                {it.sub && (
+                  <span className="line-clamp-2 block text-sm break-words text-muted">
+                    {it.sub}
+                  </span>
+                )}
               </span>
               {it.badge && (
                 <StatusBadge tone={it.badge.tone} label={it.badge.label} className="shrink-0" />

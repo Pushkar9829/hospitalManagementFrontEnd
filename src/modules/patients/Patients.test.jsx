@@ -189,8 +189,16 @@ describe('Registration', () => {
     expect(bodies.map((b) => b.confirmNotDuplicate)).toEqual([false, true]);
   });
 
+  it('opens on quick registration for the front desk', async () => {
+    setup({}, '/patients/new');
+    expect(await screen.findByRole('tab', { name: 'Quick registration' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  });
+
   it('masks Aadhaar after entry and needs a guardian under 18 (full registration)', async () => {
-    const { user } = setup({}, '/patients/new');
+    const { user } = setup({}, '/patients/new?type=full');
     await user.type(await screen.findByLabelText(/^First name/), 'Asha');
     await user.click(screen.getByLabelText('Female', { exact: true }));
     await user.type(screen.getByLabelText('Years'), '9');

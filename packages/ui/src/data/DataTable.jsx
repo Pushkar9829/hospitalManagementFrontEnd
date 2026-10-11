@@ -18,6 +18,9 @@ const density = {
  * Columns are TanStack column defs. Opt in to sorting with `enableSorting: true`; set
  * `meta: { align: 'right', mono: true, className }` for alignment, IDs and numbers.
  * Rows open with a click or with Enter when `onRowClick` is set.
+ *
+ * On a phone (below the `sm` breakpoint) each row becomes a small card of "label: value" lines,
+ * so nothing scrolls sideways; `stackOnPhone={false}` keeps the plain table (wide grids).
  */
 export function DataTable({
   columns,
@@ -36,6 +39,7 @@ export function DataTable({
   getRowId,
   maxHeight,
   className,
+  stackOnPhone = true,
 }) {
   const { t } = useTranslation();
   const sorting = parseSort(sort);
@@ -54,6 +58,11 @@ export function DataTable({
   const rows = table.getRowModel().rows;
   const showEmpty = !loading && rows.length === 0;
   const skeletonRows = Math.min(limit, 6);
+  const stack = stackOnPhone;
+  const labelOf = (column) => {
+    const h = column.columnDef.header;
+    return typeof h === 'string' ? h : '';
+  };
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
@@ -62,11 +71,11 @@ export function DataTable({
         style={maxHeight ? { maxHeight } : undefined}
       >
         <table
-          className="w-full border-collapse text-left text-base"
+          className={cn('w-full border-collapse text-left text-base', stack && 'max-sm:block')}
           aria-busy={loading || undefined}
         >
           {caption && <caption className="sr-only">{caption}</caption>}
-          <thead>
+          <thead className={cn(stack && 'max-sm:sr-only')}>
             {headerGroups.map((hg) => (
               <tr key={hg.id}>
                 {hg.headers.map((header) => {
@@ -129,7 +138,7 @@ export function DataTable({
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className={cn(stack && 'max-sm:block')}>
             {loading &&
               Array.from({ length: skeletonRows }, (_, r) => (
                 <tr key={`sk${r}`} className="border-b border-line last:border-b-0">
@@ -158,6 +167,7 @@ export function DataTable({
                   }
                   className={cn(
                     'border-b border-line last:border-b-0',
+                    stack && 'max-sm:block max-sm:py-2',
                     onRowClick &&
                       'cursor-pointer hover:bg-surface-2 focus-visible:bg-surface-2 focus-visible:-outline-offset-2',
                   )}
@@ -167,9 +177,12 @@ export function DataTable({
                     return (
                       <td
                         key={cell.id}
+                        data-label={labelOf(cell.column) || undefined}
                         className={cn(
                           cellPad,
                           'align-middle text-ink',
+                          stack &&
+                            'max-sm:flex max-sm:items-start max-sm:justify-between max-sm:gap-4 max-sm:py-1 max-sm:text-right max-sm:before:mr-auto max-sm:before:shrink-0 max-sm:before:text-left max-sm:before:font-sans max-sm:before:text-sm max-sm:before:font-semibold max-sm:before:text-muted max-sm:before:content-[attr(data-label)]',
                           meta?.align === 'right' && 'tabular text-right',
                           meta?.mono && 'font-mono text-sm',
                           meta?.className,

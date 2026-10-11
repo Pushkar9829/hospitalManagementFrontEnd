@@ -22,6 +22,7 @@ import { useCan } from '../../../lib/useCan.js';
 import { useStrings } from '../../../lib/useStrings.js';
 import { useUrlState } from '../../../lib/useUrlState.js';
 import { KpiRow } from '../../dx-kit/KpiRow.jsx';
+import { AssetsTab, BankRecTab } from '../components/Treasury.jsx';
 import { QueryView } from '../../dx-kit/QueryView.jsx';
 import { UrlTabs } from '../../dx-kit/UrlTabs.jsx';
 import { fmtDate } from '../../dx-kit/format.js';
@@ -784,6 +785,8 @@ export default function FinancePage() {
           { id: 'gst', label: t('fin.tabs.gst'), body: <Gst /> },
           { id: 'period', label: t('fin.tabs.period'), body: <Period /> },
           { id: 'accounts', label: t('fin.tabs.accounts'), body: <Accounts /> },
+          { id: 'bank', label: t('fin.tr.tab'), body: <BankRecTab /> },
+          { id: 'assets', label: t('fin.fa.tab'), body: <AssetsTab /> },
           { id: 'payables', label: t('fin.led.tabs.payables'), body: <PayablesTab /> },
           { id: 'receivables', label: t('fin.led.tabs.receivables'), body: <ReceivablesTab /> },
           { id: 'budgets', label: t('fin.led.tabs.budgets'), body: <BudgetsTab /> },

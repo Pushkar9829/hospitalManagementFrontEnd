@@ -26,6 +26,10 @@ describe('MRD retention', () => {
       'GET /approvals/count': () => [200, { inbox: 0 }],
       'GET /mrd/records': () => [200, { items: [], total: 0, page: 1, limit: 25 }],
       'GET /mrd/deficiencies': () => [200, { items: [] }],
+      'GET /mrd/settings': () => [
+        200,
+        { retentionYears: 10, mlcRetentionYears: 0, fileDueDays: 3, version: 0 },
+      ],
       'GET /mrd/retention-due': () => [
         200,
         { items: [rec('1', 'IP/1'), rec('2', 'IP/2', 'MLC'), rec('3', 'IP/3', 'LEGAL_HOLD')] },

@@ -199,28 +199,34 @@ export default function OpdAnalyticsPage() {
                 </Card>
                 <Card
                   title={t('opd.ana.arrivalsTitle', { period: periodName })}
-                  description={t('opd.ana.peak', {
-                    from: `${hh(peak.hour)}:00`,
-                    to: `${hh(peak.hour + 1)}:00`,
-                  })}
+                  description={
+                    peak
+                      ? t('opd.ana.peak', {
+                          from: `${hh(peak.hour)}:00`,
+                          to: `${hh(peak.hour + 1)}:00`,
+                        })
+                      : t('opd.ana.noArrivals')
+                  }
                 >
-                  <ColumnChart
-                    label={t('opd.ana.arrivalsTitle', { period: periodName })}
-                    highlight={peak.hour}
-                    tableLabel={t('opd.ana.showTable')}
-                    columnHeader={t('opd.ana.hour')}
-                    valueHeader={t('opd.ana.arrivals')}
-                    items={w.arrivalsByHour.map((a) => ({
-                      key: a.hour,
-                      label: hh(a.hour),
-                      value: a.count,
-                      tooltip: t('opd.ana.hourTip', {
-                        from: `${hh(a.hour)}:00`,
-                        to: `${hh(a.hour)}:59`,
-                        count: a.count,
-                      }),
-                    }))}
-                  />
+                  {peak && (
+                    <ColumnChart
+                      label={t('opd.ana.arrivalsTitle', { period: periodName })}
+                      highlight={peak.hour}
+                      tableLabel={t('opd.ana.showTable')}
+                      columnHeader={t('opd.ana.hour')}
+                      valueHeader={t('opd.ana.arrivals')}
+                      items={w.arrivalsByHour.map((a) => ({
+                        key: a.hour,
+                        label: hh(a.hour),
+                        value: a.count,
+                        tooltip: t('opd.ana.hourTip', {
+                          from: `${hh(a.hour)}:00`,
+                          to: `${hh(a.hour)}:59`,
+                          count: a.count,
+                        }),
+                      }))}
+                    />
+                  )}
                 </Card>
               </div>
             </div>

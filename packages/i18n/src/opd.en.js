@@ -899,6 +899,7 @@ export const opdEn = {
       },
       arrivalsTitle: 'Arrivals by hour · {{period}}',
       peak: 'Peak {{from}} to {{to}}',
+      noArrivals: 'No patient has checked in in this period yet.',
       hourTip: '{{from}} to {{to}} · {{count}} arrivals',
       showTable: 'Show as table',
       hour: 'Hour',

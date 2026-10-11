@@ -1,7 +1,17 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { Button, Card, Checkbox, DataTable, StatusBadge, useToast } from '@hms/ui';
+import {
+  Button,
+  Card,
+  Checkbox,
+  DataTable,
+  FormField,
+  Input,
+  StatusBadge,
+  useToast,
+} from '@hms/ui';
+import { useCan } from '../../../lib/useCan.js';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice.jsx';
 import { PendingApprovalNotice } from '../../../components/PendingApprovalNotice.jsx';
 import { FormDialog } from '../../dx-kit/FormDialog.jsx';
@@ -10,7 +20,9 @@ import { fmtDate, localeOf } from '../../dx-kit/format.js';
 import {
   useDestructionsQuery,
   useLegalHoldMutation,
+  useMrdSettingsQuery,
   useProposeDestructionMutation,
+  useSaveMrdSettingsMutation,
   useRecordDestroyedMutation,
   useRetentionDueQuery,
 } from '../api.js';
@@ -22,6 +34,55 @@ const BATCH_TONE = {
   REJECTED: 'critical',
   DESTROYED: 'neutral',
 };
+
+const RETENTION_FIELDS = ['retentionYears', 'mlcRetentionYears', 'fileDueDays'];
+
+/** How long records are kept (state rules differ) and when issued files are due back. */
+function RetentionSettings() {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const can = useCan();
+  const q = useMrdSettingsQuery();
+  const [save, state] = useSaveMrdSettingsMutation();
+  const [f, setF] = useState(null);
+  if (!q.data) return <QueryView query={q} rows={1} />;
+  const v = f ?? Object.fromEntries(RETENTION_FIELDS.map((k) => [k, String(q.data[k])]));
+  const edit = can('mrd:settings:update');
+  return (
+    <Card title={t('mrd.ret.settings')} description={t('mrd.ret.settingsHint')}>
+      {state.error && <ApiErrorNotice error={state.error} />}
+      <div className="grid gap-3 sm:grid-cols-3">
+        {RETENTION_FIELDS.map((k) => (
+          <FormField key={k} label={t(`mrd.ret.${k}`)}>
+            <Input
+              inputMode="numeric"
+              value={v[k]}
+              disabled={!edit}
+              onChange={(e) => setF({ ...v, [k]: e.target.value })}
+            />
+          </FormField>
+        ))}
+      </div>
+      {edit && (
+        <Button
+          className="mt-3"
+          disabled={!f}
+          loading={state.isLoading}
+          onClick={async () => {
+            await save({
+              ...Object.fromEntries(RETENTION_FIELDS.map((k) => [k, Number(v[k])])),
+              version: q.data.version,
+            }).unwrap();
+            setF(null);
+            toast({ tone: 'success', title: t('mrd.ret.settingsSaved') });
+          }}
+        >
+          {t('mrd.ret.saveSettings')}
+        </Button>
+      )}
+    </Card>
+  );
+}
 
 /**
  * Records past their retention period: pick the ones to destroy (MLC, held, open or issued files
@@ -50,6 +111,7 @@ export function RetentionTab() {
   };
   return (
     <div className="flex flex-col gap-4">
+      <RetentionSettings />
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-muted">{t('mrd.ret.hint')}</p>
         <Button disabled={!picked.size} onClick={() => setProposing(true)}>

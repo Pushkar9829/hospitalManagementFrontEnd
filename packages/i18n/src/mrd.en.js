@@ -2,6 +2,14 @@
 export const mrdEn = {
   mrd: {
     ret: {
+      settings: 'Retention periods',
+      settingsHint:
+        'How long records are kept after discharge under your state rules. A change moves the retention date of every record still kept.',
+      retentionYears: 'In-patient records (years)',
+      mlcRetentionYears: 'Medico-legal records (years, 0 = for ever)',
+      fileDueDays: 'Issued files due back in (days)',
+      saveSettings: 'Save retention periods',
+      settingsSaved: 'Retention periods saved',
       hint: 'Records past their retention period. MLC records, records under legal hold, open records and files issued out cannot be destroyed.',
       due: 'Past retention',
       none: 'No record is past its retention period',

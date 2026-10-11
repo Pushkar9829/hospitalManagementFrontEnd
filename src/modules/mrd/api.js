@@ -90,6 +90,11 @@ export const mrdApi = baseApi.enhanceEndpoints({ addTagTypes: TAGS }).injectEndp
       query: ({ id, ...body }) => ({ url: `/mrd/records/${id}/legal-hold`, method: 'PUT', body }),
       invalidatesTags: ['MrdRetention', 'MrdRecord'],
     }),
+    mrdSettings: b.query({ query: () => '/mrd/settings', providesTags: ['MrdRetention'] }),
+    saveMrdSettings: b.mutation({
+      query: (body) => ({ url: '/mrd/settings', method: 'PUT', body }),
+      invalidatesTags: ['MrdRetention', 'MrdRecords', 'MrdRecord'],
+    }),
     mrdStatistics: b.query({
       query: (month) => ({ url: '/mrd/statistics', params: { month } }),
       providesTags: ['MrdStats'],
@@ -124,6 +129,8 @@ export const {
   useProposeDestructionMutation,
   useRecordDestroyedMutation,
   useLegalHoldMutation,
+  useMrdSettingsQuery,
+  useSaveMrdSettingsMutation,
 } = mrdApi;
 
 export const RECORD_TONE = { DEFICIENT: 'warning', CODING: 'info', CLOSED: 'success' };

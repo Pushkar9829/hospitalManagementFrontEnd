@@ -898,6 +898,7 @@ export const opdHi = {
       },
       arrivalsTitle: 'घंटे के अनुसार आगमन · {{period}}',
       peak: 'सबसे व्यस्त {{from}} से {{to}}',
+      noArrivals: 'इस अवधि में अभी तक कोई रोगी चेक-इन नहीं हुआ।',
       hourTip: '{{from}} से {{to}} · {{count}} आगमन',
       showTable: 'तालिका के रूप में दिखाएँ',
       hour: 'घंटा',

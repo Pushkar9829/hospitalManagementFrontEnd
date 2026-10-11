@@ -47,7 +47,7 @@ const DOCTORS = [
   doctor('Dr. P. Joshi', 'Orthopaedics', { lateStartMin: 30, medianWaitMin: 41 }),
 ];
 
-function setup() {
+function setup({ noArrivals = false } = {}) {
   const seen = [];
   const fetchMock = mockApi({
     'GET /auth/me': () => [200, makeSession()],
@@ -59,7 +59,8 @@ function setup() {
     'GET /reports/opd-wait-times': (req) => {
       const q = new URL(req.url).searchParams;
       seen.push(Object.fromEntries(q));
-      return [200, waits(q.get('period') === 'week' ? 6 : 1)];
+      const w = waits(q.get('period') === 'week' ? 6 : 1);
+      return [200, noArrivals ? { ...w, arrivalsByHour: [] } : w];
     },
     'GET /reports/opd-doctor-performance': (req) => {
       const dep = new URL(req.url).searchParams.get('department');
@@ -82,6 +83,14 @@ describe('OPD analytics', () => {
     expect(
       screen.getByRole('button', { name: '11:00 to 11:59 · 88 arrivals' }),
     ).toBeInTheDocument();
+  });
+
+  it('says so when nobody has checked in yet instead of failing', async () => {
+    setup({ noArrivals: true });
+    expect(
+      await screen.findByText('No patient has checked in in this period yet.'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('412')).toBeInTheDocument();
   });
 
   it('marks a late start and a wait over target in words, not only colour', async () => {

@@ -45,7 +45,8 @@ function RequestDetail({ request }) {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const can = useCan();
-  const suggest = useSuggestBedsQuery(request.id);
+  // Bed suggestions are for those who allocate beds; others see the request only.
+  const suggest = useSuggestBedsQuery(request.id, { skip: !can('ipd:bed:allocate') });
   const [estimate, est] = useEstimateRequestMutation();
   const [sign] = useSignEstimateMutation();
   const [reserve, res] = useReserveBedMutation();
@@ -128,54 +129,56 @@ function RequestDetail({ request }) {
             </div>
           )}
         </section>
-        <section aria-labelledby="beds" className="flex flex-col gap-2">
-          <h3 id="beds" className="font-semibold text-ink">
-            {t('ipd.req.suggested')}
-          </h3>
-          <QueryView
-            query={suggest}
-            rows={3}
-            empty={<Banner tone="warning">{t('ipd.req.noBed')}</Banner>}
-            isEmpty={(d) => !d.items.length}
-          >
-            {(d) => (
-              <ul className="flex flex-col divide-y divide-line rounded-control border border-line">
-                {d.items.map((b) => (
-                  <li key={b.id} className="flex flex-wrap items-center gap-3 px-3 py-2">
-                    <span className="font-mono font-semibold">{b.code}</span>
-                    <span className="flex-1 text-sm text-muted">
-                      {b.ward} · {t(`ipd.category.${b.category}`)}
-                      {b.gender !== 'ANY' && ` · ${t(`ipd.gender.${b.gender}`)}`}
-                    </span>
-                    {can('ipd:bed:allocate') && (
-                      <Button
-                        size="sm"
-                        loading={res.isLoading}
-                        onClick={async () => {
-                          setFailure(null);
-                          try {
-                            await reserve({ id: request.id, bedId: b.id }).unwrap();
-                            toast({
-                              tone: 'success',
-                              title: t('ipd.req.reserved', {
-                                code: b.code,
-                                name: request.patient.name,
-                              }),
-                            });
-                          } catch (e) {
-                            setFailure(e);
-                          }
-                        }}
-                      >
-                        {t('ipd.req.reserve', { code: b.code })}
-                      </Button>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </QueryView>
-        </section>
+        {can('ipd:bed:allocate') && (
+          <section aria-labelledby="beds" className="flex flex-col gap-2">
+            <h3 id="beds" className="font-semibold text-ink">
+              {t('ipd.req.suggested')}
+            </h3>
+            <QueryView
+              query={suggest}
+              rows={3}
+              empty={<Banner tone="warning">{t('ipd.req.noBed')}</Banner>}
+              isEmpty={(d) => !d.items.length}
+            >
+              {(d) => (
+                <ul className="flex flex-col divide-y divide-line rounded-control border border-line">
+                  {d.items.map((b) => (
+                    <li key={b.id} className="flex flex-wrap items-center gap-3 px-3 py-2">
+                      <span className="font-mono font-semibold">{b.code}</span>
+                      <span className="flex-1 text-sm text-muted">
+                        {b.ward} · {t(`ipd.category.${b.category}`)}
+                        {b.gender !== 'ANY' && ` · ${t(`ipd.gender.${b.gender}`)}`}
+                      </span>
+                      {can('ipd:bed:allocate') && (
+                        <Button
+                          size="sm"
+                          loading={res.isLoading}
+                          onClick={async () => {
+                            setFailure(null);
+                            try {
+                              await reserve({ id: request.id, bedId: b.id }).unwrap();
+                              toast({
+                                tone: 'success',
+                                title: t('ipd.req.reserved', {
+                                  code: b.code,
+                                  name: request.patient.name,
+                                }),
+                              });
+                            } catch (e) {
+                              setFailure(e);
+                            }
+                          }}
+                        >
+                          {t('ipd.req.reserve', { code: b.code })}
+                        </Button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </QueryView>
+          </section>
+        )}
         <div className="flex flex-wrap gap-2 border-t border-line pt-3">
           {['RESERVED', 'ESTIMATED'].includes(request.status) && (
             <Link

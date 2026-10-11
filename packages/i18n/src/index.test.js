@@ -1,0 +1,162 @@
+import { describe, expect, it } from 'vitest';
+import { createI18n, en, hi, translateValidation } from './index.js';
+import { addAdminStrings, adminModulesEn, adminModulesHi } from './admin.js';
+import { addPatientsStrings, patientsEn, patientsHi } from './patients.js';
+import { addBillingStrings, billingEn, billingHi } from './billing.js';
+import { addSubscriptionStrings, subscriptionEn, subscriptionHi } from './subscription.js';
+import { addSignupStrings, signupEn, signupHi } from './signup.js';
+import { addOpdStrings, opdEn, opdHi } from './opd.js';
+import { addIpdStrings, ipdEn, ipdHi } from './ipd.js';
+import { addLabStrings, labEn, labHi } from './lab.js';
+import { addRadStrings, radEn, radHi } from './radiology.js';
+import { addInventoryStrings, inventoryEn, inventoryHi } from './inventory.js';
+import { addPeopleStrings, peopleEn, peopleHi } from './people.js';
+import { addFinanceStrings, financeEn, financeHi } from './finance.js';
+import { addReportsStrings, reportsEn, reportsHi } from './reports.js';
+import { addRoleHomeStrings, roleHomeEn, roleHomeHi } from './rolehome.js';
+import { addPortalStrings, portalEn, portalHi } from './portal.js';
+import { addCrmStrings, crmEn, crmHi } from './crm.js';
+import { addQualityStrings, qualityEn, qualityHi } from './quality.js';
+import { addFacilityStrings, facilityEn, facilityHi } from './facility.js';
+import { addDietStrings, dietEn, dietHi } from './diet.js';
+import { addMrdStrings, mrdEn, mrdHi } from './mrd.js';
+import { addConsoleStrings, consoleEn, consoleHi } from './console.js';
+import { addDxkitStrings, dxkitEn, dxkitHi } from './dxkit.js';
+
+/** Lazily loaded screen bundles: [name, English, Hindi, add function, a key, its Hindi]. */
+const BUNDLES = [
+  [
+    'patients',
+    patientsEn,
+    patientsHi,
+    addPatientsStrings,
+    'patients.register',
+    'मरीज़ रजिस्टर करें',
+  ],
+  ['billing', billingEn, billingHi, addBillingStrings, 'billing.tabs.new', 'नया बिल'],
+  [
+    'subscription',
+    subscriptionEn,
+    subscriptionHi,
+    addSubscriptionStrings,
+    'subscription.title',
+    'सब्सक्रिप्शन',
+  ],
+  ['signup', signupEn, signupHi, addSignupStrings, 'signup.nav.pricing', 'कीमतें'],
+  ['opd', opdEn, opdHi, addOpdStrings, 'opd.tabs.calendar', 'अपॉइंटमेंट कैलेंडर'],
+  ['ipd', ipdEn, ipdHi, addIpdStrings, 'ipd.beds.title', 'बेड बोर्ड'],
+  ['lab', labEn, labHi, addLabStrings, 'lab.crumb', 'प्रयोगशाला'],
+  ['radiology', radEn, radHi, addRadStrings, 'rad.crumb', 'रेडियोलॉजी'],
+  ['inventory', inventoryEn, inventoryHi, addInventoryStrings, 'inv.title', 'इन्वेंटरी'],
+  ['people', peopleEn, peopleHi, addPeopleStrings, 'pay.title', 'पेरोल'],
+  ['finance', financeEn, financeHi, addFinanceStrings, 'fin.title', 'वित्त'],
+  ['reports', reportsEn, reportsHi, addReportsStrings, 'rep.title', 'रिपोर्ट'],
+  ['rolehome', roleHomeEn, roleHomeHi, addRoleHomeStrings, 'rh.quick.reports', 'रिपोर्ट'],
+  ['portal', portalEn, portalHi, addPortalStrings, 'portal.title', 'मरीज़ पोर्टल'],
+  ['crm', crmEn, crmHi, addCrmStrings, 'crm.title', 'मरीज़ सीआरएम'],
+  ['quality', qualityEn, qualityHi, addQualityStrings, 'qlt.title', 'गुणवत्ता और मरीज़ सुरक्षा'],
+  ['facility', facilityEn, facilityHi, addFacilityStrings, 'fac.title', 'हाउसकीपिंग और सुविधा'],
+  ['diet', dietEn, dietHi, addDietStrings, 'diet.title', 'आहार और रसोई'],
+  ['mrd', mrdEn, mrdHi, addMrdStrings, 'mrd.title', 'चिकित्सा अभिलेख'],
+  ['console', consoleEn, consoleHi, addConsoleStrings, 'console.cat.title', 'प्लान और कीमतें'],
+  ['dxkit', dxkitEn, dxkitHi, addDxkitStrings, 'dxkit.choose', 'चुनें…'],
+];
+
+/** Every leaf key path in a nested object, e.g. `login.title`. */
+function keys(obj, prefix = '') {
+  return Object.entries(obj).flatMap(([k, v]) =>
+    v && typeof v === 'object' ? keys(v, `${prefix}${k}.`) : [`${prefix}${k}`],
+  );
+}
+
+function placeholders(str) {
+  return [...String(str).matchAll(/{{\s*(\w+)\s*}}/g)].map((m) => m[1]).sort();
+}
+
+describe('@hms/i18n', () => {
+  it('has a Hindi string for every English key, with the same placeholders', () => {
+    const enKeys = keys(en);
+    const hiKeys = new Set(keys(hi));
+    expect(enKeys.filter((k) => !hiKeys.has(k))).toEqual([]);
+    const get = (o, path) => path.split('.').reduce((a, k) => a[k], o);
+    for (const k of enKeys) expect(placeholders(get(hi, k)), k).toEqual(placeholders(get(en, k)));
+  });
+
+  it('has Hindi for every admin screen string, with the same placeholders', () => {
+    const enKeys = keys(adminModulesEn);
+    const hiKeys = new Set(keys(adminModulesHi));
+    expect(enKeys.filter((k) => !hiKeys.has(k))).toEqual([]);
+    expect(keys(adminModulesHi).filter((k) => !enKeys.includes(k))).toEqual([]);
+    const get = (o, path) => path.split('.').reduce((a, k) => a[k], o);
+    for (const k of enKeys)
+      expect(placeholders(get(adminModulesHi, k)), k).toEqual(placeholders(get(adminModulesEn, k)));
+  });
+
+  it('translates admin strings to Hindi, not copies of the English', () => {
+    // Values that are acronyms, codes or placeholders only may stay the same.
+    const same = keys(adminModulesEn).filter((k) => {
+      const get = (o) => k.split('.').reduce((a, x) => a[x], o);
+      const e = get(adminModulesEn);
+      return e === get(adminModulesHi) && /[a-z]{4,}/.test(e.replace(/{{\s*\w+\s*}}/g, ''));
+    });
+    expect(same).toEqual([]);
+  });
+
+  it.each(BUNDLES)('%s: Hindi for every key, same placeholders, no extra keys', (_n, en_, hi_) => {
+    const enKeys = keys(en_);
+    const hiKeys = keys(hi_);
+    expect(enKeys.filter((k) => !hiKeys.includes(k))).toEqual([]);
+    expect(hiKeys.filter((k) => !enKeys.includes(k))).toEqual([]);
+    const get = (o, path) => path.split('.').reduce((a, k) => a[k], o);
+    for (const k of enKeys) expect(placeholders(get(hi_, k)), k).toEqual(placeholders(get(en_, k)));
+  });
+
+  it.each(BUNDLES)('%s: translated to Hindi in Devanagari, not copied', (_n, en_, hi_) => {
+    const get = (o, k) => k.split('.').reduce((a, x) => a[x], o);
+    const same = keys(en_).filter((k) => {
+      const e = get(en_, k);
+      return e === get(hi_, k) && /[a-z]{4,}/.test(e.replace(/{{\s*\w+\s*}}/g, ''));
+    });
+    expect(same).toEqual([]);
+  });
+
+  it.each(BUNDLES)('%s: added to an instance once, on demand', (_n, _e, _h, add, key, hindi) => {
+    const i18n = createI18n('hi');
+    expect(i18n.exists(key)).toBe(false);
+    add(i18n);
+    add(i18n);
+    expect(i18n.t(key)).toBe(hindi);
+  });
+
+  it('adds the admin strings to an instance once, on demand', () => {
+    const i18n = createI18n('hi');
+    expect(i18n.exists('approvals.approve')).toBe(false);
+    addAdminStrings(i18n);
+    addAdminStrings(i18n);
+    expect(i18n.t('approvals.approve')).toBe('मंज़ूर करें');
+    expect(i18n.t('common.save')).toBe('सेव करें');
+  });
+
+  it('writes Hindi in Devanagari', () => {
+    expect(hi.common.save).toMatch(/[ऀ-ॿ]/);
+    expect(hi.login.submit).toMatch(/[ऀ-ॿ]/);
+  });
+
+  it('creates independent instances with interpolation', () => {
+    const a = createI18n('en');
+    const b = createI18n('hi');
+    expect(a.t('home.morning', { name: 'Anjali' })).toBe('Good morning, Anjali');
+    expect(b.t('home.morning', { name: 'Anjali' })).toBe('सुप्रभात, Anjali');
+    expect(a.language).toBe('en');
+  });
+
+  it('falls back to English for unsupported languages', () => {
+    expect(createI18n('fr').language).toBe('en');
+  });
+
+  it('translates shared Zod messages and falls back to the English text', () => {
+    const i18n = createI18n('hi');
+    expect(translateValidation(i18n.t, 'Enter your password')).toBe('अपना पासवर्ड डालें');
+    expect(translateValidation(i18n.t, 'Some new rule.')).toBe('Some new rule.');
+  });
+});

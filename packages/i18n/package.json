@@ -1,0 +1,40 @@
+{
+  "name": "@hms/i18n",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./admin": "./src/admin.js",
+    "./patients": "./src/patients.js",
+    "./billing": "./src/billing.js",
+    "./subscription": "./src/subscription.js",
+    "./signup": "./src/signup.js",
+    "./opd": "./src/opd.js",
+    "./ipd": "./src/ipd.js",
+    "./lab": "./src/lab.js",
+    "./radiology": "./src/radiology.js",
+    "./inventory": "./src/inventory.js",
+    "./people": "./src/people.js",
+    "./finance": "./src/finance.js",
+    "./reports": "./src/reports.js",
+    "./rolehome": "./src/rolehome.js",
+    "./portal": "./src/portal.js",
+    "./crm": "./src/crm.js",
+    "./quality": "./src/quality.js",
+    "./facility": "./src/facility.js",
+    "./diet": "./src/diet.js",
+    "./mrd": "./src/mrd.js",
+    "./console": "./src/console.js",
+    "./dxkit": "./src/dxkit.js"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "i18next": "25.10.10"
+  }
+}

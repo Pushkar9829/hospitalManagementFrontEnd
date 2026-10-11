@@ -1,0 +1,25 @@
+import { lazy } from 'react';
+import { GALLERY_ENABLED } from './registry.js';
+
+/** Pages outside the screen catalogue, each loaded only when opened. */
+export const LoginPage = lazy(() => import('../modules/auth/pages/LoginPage.jsx'));
+export const ForgotPasswordPage = lazy(
+  () => import('../modules/auth/pages/ForgotPasswordPage.jsx'),
+);
+export const SetupTwoFactorPage = lazy(
+  () => import('../modules/auth/pages/SetupTwoFactorPage.jsx'),
+);
+export const ChangePasswordPage = lazy(
+  () => import('../modules/auth/pages/ChangePasswordPage.jsx'),
+);
+export const WelcomePage = lazy(() => import('../modules/auth/pages/WelcomePage.jsx'));
+export const NotFoundPage = lazy(() => import('../modules/system/NotFoundPage.jsx'));
+export const DevGalleryPage = GALLERY_ENABLED
+  ? lazy(() => import('../modules/dev/DevGalleryPage.jsx'))
+  : null;
+export const SuspendedPage = lazy(() => import('../modules/system/SuspendedPage.jsx'));
+export const PricingPage = lazy(() => import('../modules/signup/pages/PricingPage.jsx'));
+export const SignupPage = lazy(() => import('../modules/signup/pages/SignupPage.jsx'));
+export const QueueTvPage = lazy(() => import('../modules/opd/pages/QueueTvPage.jsx'));
+export const FeedbackPage = lazy(() => import('../modules/quality/pages/FeedbackPage.jsx'));
+export const PortalPage = lazy(() => import('../modules/portal/pages/PortalPage.jsx'));

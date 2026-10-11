@@ -279,6 +279,8 @@ export const billingHi = {
     },
     print: {
       bill: 'बिल प्रिंट करें (A4)',
+      hindi: 'हिंदी में',
+      english: 'अंग्रेज़ी में',
       billTitle: 'बिल {{no}}',
       receiptTitle: 'रसीद {{no}}',
     },

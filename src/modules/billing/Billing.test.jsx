@@ -362,6 +362,25 @@ describe('Bill', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Reprint' }));
     expect(within(dialog).getByText('Give a reason (3 characters or more).')).toBeVisible();
   });
+
+  it('prints the bill in Hindi when asked', async () => {
+    const asked = [];
+    URL.createObjectURL ??= () => 'blob:bill';
+    URL.revokeObjectURL ??= () => {};
+    const { user } = setup(
+      {
+        [`GET /billing/bills/${BILL}`]: () => [200, finalBill()],
+        [`GET /billing/bills/${BILL}/pdf`]: (req) => {
+          asked.push(new URL(req.url).searchParams.get('lang'));
+          return [200, {}];
+        },
+      },
+      `/billing/bills/${BILL}`,
+    );
+    await user.click(await screen.findByRole('button', { name: 'In Hindi' }));
+    await screen.findByRole('dialog', { name: 'Bill OP/26-27/000154' });
+    await waitFor(() => expect(asked).toEqual(['hi']));
+  });
 });
 
 describe('Cashier shift', () => {

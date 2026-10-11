@@ -91,7 +91,11 @@ export const billingEn = {
         none: 'No deposit slips yet',
         slip: 'Slip',
         cheques: 'Cheques',
-        status: { DEPOSITED: 'Deposited', CREDITED: 'Credited', CHEQUE_RETURNED: 'Cheque returned' },
+        status: {
+          DEPOSITED: 'Deposited',
+          CREDITED: 'Credited',
+          CHEQUE_RETURNED: 'Cheque returned',
+        },
         credited: 'Mark credited',
         returned: 'Cheque returned',
         updated: 'Slip {{no}} updated',
@@ -276,6 +280,8 @@ export const billingEn = {
     },
     print: {
       bill: 'Print bill (A4)',
+      hindi: 'In Hindi',
+      english: 'In English',
       billTitle: 'Bill {{no}}',
       receiptTitle: 'Receipt {{no}}',
     },

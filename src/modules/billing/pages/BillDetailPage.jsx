@@ -244,9 +244,10 @@ export default function BillDetailPage() {
     }
   };
 
-  const printBill = () =>
+  // Without a language the bill prints in the patient's preferred language.
+  const printBill = (lang) =>
     setPrinting({
-      url: `/billing/bills/${bill.id}/pdf`,
+      url: `/billing/bills/${bill.id}/pdf${lang ? `?lang=${lang}` : ''}`,
       title: t('billing.print.billTitle', { no: bill.billNo }),
       number: bill.billNo,
       reprint: bill.printCount > 0,
@@ -281,13 +282,21 @@ export default function BillDetailPage() {
               </Button>
             )}
             {(final || bill.status === 'CANCELLED') && can('billing:bill:print') && (
-              <Button
-                variant="secondary"
-                icon={<Printer size={16} aria-hidden="true" />}
-                onClick={printBill}
-              >
-                {t('billing.print.bill')}
-              </Button>
+              <>
+                <Button
+                  variant="secondary"
+                  icon={<Printer size={16} aria-hidden="true" />}
+                  onClick={() => printBill()}
+                >
+                  {t('billing.print.bill')}
+                </Button>
+                <Button variant="ghost" onClick={() => printBill('hi')}>
+                  {t('billing.print.hindi')}
+                </Button>
+                <Button variant="ghost" onClick={() => printBill('en')}>
+                  {t('billing.print.english')}
+                </Button>
+              </>
             )}
           </>
         }

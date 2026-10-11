@@ -16,6 +16,8 @@ const PAY = [
   'PayStructures',
   'PayLoans',
   'PaySettings',
+  'PayGratuity',
+  'PayBonus',
 ];
 
 export const hrApi = baseApi
@@ -186,6 +188,19 @@ export const hrApi = baseApi
         query: (body) => put('/payroll/settings', body),
         invalidatesTags: ['PaySettings'],
       }),
+      gratuity: b.query({
+        query: (params = {}) => ({ url: '/payroll/gratuity', params: cleanParams(params) }),
+        providesTags: ['PayGratuity'],
+      }),
+      bonusRuns: b.query({ query: () => '/payroll/bonus', providesTags: ['PayBonus'] }),
+      draftBonus: b.mutation({
+        query: (body) => post('/payroll/bonus', body),
+        invalidatesTags: ['PayBonus'],
+      }),
+      payBonus: b.mutation({
+        query: ({ id, version }) => post(`/payroll/bonus/${id}/pay`, { version }),
+        invalidatesTags: ['PayBonus'],
+      }),
     }),
   });
 
@@ -238,6 +253,10 @@ export const {
   usePfEcrQuery,
   usePaySettingsQuery,
   useSavePaySettingsMutation,
+  useGratuityQuery,
+  useBonusRunsQuery,
+  useDraftBonusMutation,
+  usePayBonusMutation,
 } = hrApi;
 
 /** Badge tones by status. */

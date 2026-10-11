@@ -31,6 +31,13 @@ import { EditPatientSheet } from '../components/EditPatientSheet.jsx';
 import { MergeDialog } from '../components/MergeDialog.jsx';
 import { PatientHeader } from '../components/PatientHeader.jsx';
 import { TimelineTab } from '../components/TimelineTab.jsx';
+import {
+  AdmissionsTab,
+  MedicinesTab,
+  RecordSummary,
+  ReportsTab,
+  VisitsTab,
+} from '../components/RecordSections.jsx';
 import { isObjectId, usePatient } from '../hooks.js';
 
 function BillsTab({ patientId }) {
@@ -85,6 +92,18 @@ export default function PatientProfilePage() {
   const active = p.status === 'ACTIVE';
   const tabs = [
     { id: 'timeline', label: t('patients.tabs.timeline'), body: <TimelineTab patientId={p.id} /> },
+    { id: 'visits', label: t('patients.rec.visits'), body: <VisitsTab patientId={p.id} /> },
+    {
+      id: 'admissions',
+      label: t('patients.rec.admissions'),
+      body: <AdmissionsTab patientId={p.id} />,
+    },
+    { id: 'reports', label: t('patients.rec.reports'), body: <ReportsTab patientId={p.id} /> },
+    {
+      id: 'medicines',
+      label: t('patients.rec.medicines'),
+      body: <MedicinesTab patientId={p.id} />,
+    },
     { id: 'details', label: t('patients.tabs.details'), body: <DetailsTab patient={p} /> },
     {
       id: 'documents',
@@ -137,6 +156,7 @@ export default function PatientProfilePage() {
         }
       />
       <PatientHeader patient={p} />
+      <RecordSummary patientId={p.id} />
       {notice && (
         <PendingApprovalNotice approvalId={notice.approvalId}>
           {t('patients.merge.sent', { from: notice.merged.uhid, to: notice.survivor.uhid })}{' '}

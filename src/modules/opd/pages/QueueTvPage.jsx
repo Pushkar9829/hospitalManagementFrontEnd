@@ -45,6 +45,32 @@ function useCalled(rooms) {
   return called;
 }
 
+/**
+ * Voice call-out: each newly called token is read in English, then Hindi. Browsers allow speech
+ * only after someone taps the screen once, so the TV shows a button until then.
+ */
+function useCallOut(called, t) {
+  const [on, setOn] = useState(false);
+  const supported = typeof globalThis.speechSynthesis !== 'undefined';
+  useEffect(() => {
+    if (!on || !supported || !called.length) return;
+    const synth = globalThis.speechSynthesis;
+    for (const c of called)
+      for (const [lng, lang] of [
+        ['en', 'en-IN'],
+        ['hi', 'hi-IN'],
+      ]) {
+        const u = new globalThis.SpeechSynthesisUtterance(
+          t('opd.tv.pleaseGo', { token: c.token, room: c.room, lng }),
+        );
+        u.lang = lang;
+        u.rate = 0.9;
+        synth.speak(u);
+      }
+  }, [called, on, supported, t]);
+  return { on, supported, turnOn: () => setOn(true) };
+}
+
 function RoomCard({ room, flash }) {
   const { t } = useTranslation();
   return (
@@ -110,6 +136,7 @@ export default function QueueTvPage() {
   );
   const data = display.data;
   const called = useCalled(data?.rooms);
+  const voice = useCallOut(called, t);
   const stale =
     display.isError ||
     (data && now - new Date(display.fulfilledTimeStamp ?? data.updatedAt) > STALE_MS);
@@ -129,11 +156,22 @@ export default function QueueTvPage() {
     <main className="flex min-h-dvh flex-col bg-ground">
       <header className="flex items-center justify-between gap-4 bg-primary px-8 py-4 text-on-primary">
         <h1 className="text-3xl font-semibold">
-          {[hospital, data?.title].filter(Boolean).join(' · ') || t('opd.tv.title')}
+          {[hospital, data?.branch, data?.title].filter(Boolean).join(' · ') || t('opd.tv.title')}
         </h1>
-        <p className="font-mono text-4xl font-semibold" aria-label={t('opd.tv.time')}>
-          {fmtTime(now, locale)}
-        </p>
+        <div className="flex items-center gap-6">
+          {voice.supported && !voice.on && (
+            <button
+              type="button"
+              onClick={voice.turnOn}
+              className="rounded-control border-2 border-on-primary px-4 py-2 text-lg font-semibold"
+            >
+              {t('opd.tv.voiceOn')}
+            </button>
+          )}
+          <p className="font-mono text-4xl font-semibold" aria-label={t('opd.tv.time')}>
+            {fmtTime(now, locale)}
+          </p>
+        </div>
       </header>
 
       {stale && (

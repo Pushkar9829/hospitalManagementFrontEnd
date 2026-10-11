@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { screen, waitFor, within } from '@testing-library/react';
 import { errorBody, makeSession } from '../../test/fixtures.js';
 import { mockApi, renderApp } from '../../test/renderApp.jsx';
@@ -31,6 +32,11 @@ function setup(path, { signedIn = false } = {}) {
     'GET /opd/queue/display': (req) => {
       headers.push(req.headers.get('X-Display-Key'));
       return [200, DISPLAY];
+    },
+    // A TV with a key uses its own endpoint (no signed-in user).
+    'GET /opd/queue/display/tv': (req) => {
+      headers.push(req.headers.get('X-Display-Key'));
+      return [200, { ...DISPLAY, branch: 'Main Branch' }];
     },
   });
   return { ...renderApp(path), fetchMock, headers };
@@ -69,4 +75,17 @@ describe('Queue TV', () => {
     ).toBeInTheDocument();
     await waitFor(() => expect(headers[0]).toBeNull());
   });
+
+  it('offers to turn on spoken announcements where the browser can speak', async () => {
+    vi.stubGlobal('speechSynthesis', { speak: vi.fn() });
+    vi.stubGlobal('SpeechSynthesisUtterance', function Utterance(text) {
+      this.text = text;
+    });
+    setup('/display/queue?key=tv-floor-1');
+    const on = await screen.findByRole('button', { name: 'Turn on announcements' });
+    await userEvent.setup().click(on);
+    expect(screen.queryByRole('button', { name: 'Turn on announcements' })).toBeNull();
+  });
 });
+
+afterEach(() => vi.unstubAllGlobals());

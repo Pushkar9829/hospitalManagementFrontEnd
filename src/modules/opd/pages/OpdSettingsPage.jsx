@@ -13,6 +13,7 @@ import { UrlTabs } from '../../dx-kit/UrlTabs.jsx';
 import { useOpdScheduleQuery, useOpdSchedulesQuery, useOpdSettingsQuery } from '../api.js';
 import { BookingRulesForm, CancellationForm } from '../components/RuleForms.jsx';
 import { ScheduleEditor } from '../components/ScheduleEditor.jsx';
+import { DisplayKeysTab } from '../components/DisplayKeysTab.jsx';
 import {
   MessagesTab,
   TemplatesTab,
@@ -132,6 +133,11 @@ export default function OpdSettingsPage() {
             id: 'templates',
             label: t('opd.cfg.tabs.templates'),
             body: <TemplatesTab canEdit={canSettings} />,
+          },
+          (can('opd:settings:read') || canSettings) && {
+            id: 'tvs',
+            label: t('opd.cfg.tabs.tvs'),
+            body: <DisplayKeysTab canEdit={canSettings} />,
           },
         ]}
       />

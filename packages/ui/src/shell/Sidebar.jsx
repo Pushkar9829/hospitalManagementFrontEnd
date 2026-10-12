@@ -21,10 +21,10 @@ function MenuItem({ item, active, favourite, onToggleFavourite, onNavigate, t })
           onNavigate(item.route, item);
         }}
         className={cn(
-          'relative flex min-h-9 flex-1 items-center rounded-control py-1.5 pr-10 pl-3 text-base text-menu-ink transition-colors pointer-coarse:min-h-tap',
-          'hover:bg-menu-hover',
+          'relative flex min-h-9 flex-1 items-center rounded-control py-1.5 pr-10 pl-5 text-base text-menu-ink/85 transition-colors pointer-coarse:min-h-tap',
+          'hover:bg-menu-hover hover:text-menu-ink',
           active &&
-            'bg-menu-active font-semibold before:absolute before:top-1.5 before:bottom-1.5 before:left-0 before:w-[3px] before:rounded-r before:bg-menu-accent',
+            'bg-menu-active font-semibold text-menu-ink before:absolute before:top-1.5 before:bottom-1.5 before:left-0 before:w-[3px] before:rounded-r before:bg-menu-accent',
         )}
       >
         <span className="truncate">{item.label}</span>
@@ -205,7 +205,10 @@ export function Sidebar({
           const listId = `menu-group-${g.id.replace(/\W+/g, '-')}`;
           const containsActive = g.items.some((it) => it === active);
           return (
-            <div key={g.id} className="mt-2 first:mt-0">
+            <div
+              key={g.id}
+              className="mt-3 border-t border-menu-line pt-3 first:mt-0 first:border-t-0 first:pt-0"
+            >
               <h2>
                 <button
                   type="button"
@@ -213,16 +216,22 @@ export function Sidebar({
                   aria-controls={listId}
                   onClick={() => toggleGroup(g.id)}
                   disabled={Boolean(q)}
-                  className="flex min-h-8 w-full cursor-pointer items-center justify-between rounded-control px-3 text-xs font-semibold tracking-[0.08em] text-menu-muted uppercase hover:text-menu-ink disabled:cursor-default"
+                  className="flex min-h-8 w-full cursor-pointer items-center justify-between rounded-control px-3 text-xs font-bold tracking-[0.08em] text-menu-accent uppercase hover:bg-menu-hover disabled:cursor-default"
                 >
-                  <span className={cn(containsActive && isCollapsed && 'text-menu-ink')}>
-                    {g.id === '__favourites' && (
-                      <Star
-                        size={12}
+                  <span
+                    className={cn(
+                      'flex items-center gap-2',
+                      containsActive && isCollapsed && 'text-menu-ink',
+                    )}
+                  >
+                    {g.id !== '__favourites' && (
+                      <span
                         aria-hidden="true"
-                        className="-mt-0.5 mr-1.5 inline"
-                        fill="currentColor"
+                        className="size-1.5 shrink-0 rounded-full bg-current"
                       />
+                    )}
+                    {g.id === '__favourites' && (
+                      <Star size={12} aria-hidden="true" className="shrink-0" fill="currentColor" />
                     )}
                     {g.group}
                   </span>

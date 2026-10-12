@@ -1,13 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/cn.js';
-import { initials } from '../lib/format.js';
+import { ageText, initials } from '../lib/format.js';
 import { StatusBadge } from '../feedback/StatusBadge.jsx';
 import { AllergyChip } from './AllergyChip.jsx';
-
-function ageText(t, age) {
-  if (age == null || age === '') return null;
-  return typeof age === 'number' ? t('patient.age', { value: age }) : age;
-}
 
 /**
  * Patient identity, mandatory on every patient-context screen (UI/UX review): full name, age,

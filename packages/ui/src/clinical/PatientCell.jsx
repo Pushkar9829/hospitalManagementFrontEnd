@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/cn.js';
+import { ageText } from '../lib/format.js';
 
 /**
  * Patient in a table cell: full name (never abbreviated) and, below, UHID with age and sex, so
@@ -7,10 +8,7 @@ import { cn } from '../lib/cn.js';
  */
 export function PatientCell({ name, uhid, age, sex, className }) {
   const { t } = useTranslation();
-  const ageSex = [
-    typeof age === 'number' ? t('patient.age', { value: age }) : age,
-    sex ? t(`patient.sexShort.${sex}`, { defaultValue: sex }) : null,
-  ]
+  const ageSex = [ageText(t, age), sex ? t(`patient.sexShort.${sex}`, { defaultValue: sex }) : null]
     .filter(Boolean)
     .join(' ');
   return (

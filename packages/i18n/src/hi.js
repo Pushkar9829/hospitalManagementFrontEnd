@@ -264,6 +264,8 @@ export const hi = {
     weight: 'वज़न',
     weightKg: '{{value}} kg',
     age: '{{value}} वर्ष',
+    ageMonths: '{{value}} माह',
+    ageDays: '{{value}} दिन',
     sex: { M: 'पुरुष', F: 'महिला', O: 'अन्य', U: 'नहीं बताया' },
     sexShort: { M: 'पु', F: 'म', O: 'अ', U: '-' },
   },

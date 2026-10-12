@@ -23,12 +23,15 @@ export function PickList({ items, selectedId, onPick, label, className }) {
               )}
             >
               {it.lead && (
-                <span className="w-20 shrink-0 font-mono text-sm sm:w-28">{it.lead}</span>
+                <span className="max-w-24 shrink-0 truncate font-mono text-sm">{it.lead}</span>
               )}
+              {/* Names wrap on a phone; the narrow desktop list keeps one line each. */}
               <span className="min-w-0 flex-1">
-                <strong className="block font-semibold break-words text-ink">{it.title}</strong>
+                <strong className="block font-semibold break-words text-ink sm:truncate">
+                  {it.title}
+                </strong>
                 {it.sub && (
-                  <span className="line-clamp-2 block text-sm break-words text-muted">
+                  <span className="line-clamp-2 block text-sm break-words text-muted sm:line-clamp-1">
                     {it.sub}
                   </span>
                 )}

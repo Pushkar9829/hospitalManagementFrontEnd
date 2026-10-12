@@ -22,6 +22,7 @@ import { useCan } from '../../../lib/useCan.js';
 import { useStrings } from '../../../lib/useStrings.js';
 import { useUrlState } from '../../../lib/useUrlState.js';
 import { KpiRow } from '../../dx-kit/KpiRow.jsx';
+import { useAccountName } from '../accountName.js';
 import { AssetsTab, BankRecTab } from '../components/Treasury.jsx';
 import { QueryView } from '../../dx-kit/QueryView.jsx';
 import { UrlTabs } from '../../dx-kit/UrlTabs.jsx';
@@ -68,6 +69,7 @@ function useAccounts() {
 }
 
 function AccountSelect({ value, onChange, label, className }) {
+  const acctName = useAccountName();
   const { t } = useTranslation();
   const accounts = useAccounts();
   return (
@@ -76,7 +78,10 @@ function AccountSelect({ value, onChange, label, className }) {
         value={value}
         placeholder={t('fin.pickAccount')}
         onChange={(e) => onChange(e.target.value)}
-        options={accounts.map((a) => ({ value: a.id, label: `${a.code} · ${a.name}` }))}
+        options={accounts.map((a) => ({
+          value: a.id,
+          label: `${a.code} · ${acctName(a.code, a.name)}`,
+        }))}
       />
     </FormField>
   );
@@ -205,6 +210,7 @@ function VoucherForm() {
 }
 
 function DayBook() {
+  const acctName = useAccountName();
   const { t } = useTranslation();
   const can = useCan();
   const [from, setFrom] = useUrlState('from', today().slice(0, 8) + '01');
@@ -278,7 +284,7 @@ function DayBook() {
                               <tr key={i}>
                                 <td className="py-0.5">
                                   {l.credit ? '    ' : ''}
-                                  {l.code} {l.name}
+                                  {l.code} {acctName(l.code, l.name)}
                                 </td>
                                 <td className="tabular py-0.5 text-right">{money(l.debit)}</td>
                                 <td className="tabular py-0.5 text-right">{money(l.credit)}</td>
@@ -307,6 +313,7 @@ function DayBook() {
 }
 
 function TrialBalance() {
+  const acctName = useAccountName();
   const { t } = useTranslation();
   const [asOf, setAsOf] = useUrlState('asOf', today());
   const q = useTrialBalanceQuery({ asOf });
@@ -332,7 +339,8 @@ function TrialBalance() {
                 {d.items.map((r) => (
                   <tr key={r.id}>
                     <td className="px-3 py-1.5">
-                      <span className="font-mono text-muted">{r.code}</span> {r.name}
+                      <span className="font-mono text-muted">{r.code}</span>{' '}
+                      {acctName(r.code, r.name)}
                     </td>
                     <td className="tabular px-3 py-1.5 text-right">{money(r.debit)}</td>
                     <td className="tabular px-3 py-1.5 text-right">{money(r.credit)}</td>
@@ -355,6 +363,7 @@ function TrialBalance() {
 }
 
 function Section({ title, rows, total }) {
+  const acctName = useAccountName();
   const { t } = useTranslation();
   return (
     <div>
@@ -365,7 +374,8 @@ function Section({ title, rows, total }) {
           {rows.map((r) => (
             <tr key={r.id}>
               <td className="py-1.5">
-                {r.code !== '-' && <span className="font-mono text-muted">{r.code}</span>} {r.name}
+                {r.code !== '-' && <span className="font-mono text-muted">{r.code}</span>}{' '}
+                {acctName(r.code, r.name)}
               </td>
               <td className="tabular py-1.5 text-right">{inrExact(r.amount)}</td>
             </tr>
@@ -678,6 +688,7 @@ function Period() {
 }
 
 function Accounts() {
+  const acctName = useAccountName();
   const { t } = useTranslation();
   const can = useCan();
   const q = useFinAccountsQuery();
@@ -741,7 +752,7 @@ function Accounts() {
                     .map((a) => (
                       <li key={a.id} className="flex gap-3 py-1">
                         <span className="w-12 font-mono text-muted">{a.code}</span>
-                        <span className="flex-1">{a.name}</span>
+                        <span className="flex-1">{acctName(a.code, a.name)}</span>
                         {a.key && (
                           <span className="text-xs text-muted">{t('fin.acct.system')}</span>
                         )}

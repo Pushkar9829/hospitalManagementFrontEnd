@@ -26,7 +26,8 @@
     "./diet": "./src/diet.js",
     "./mrd": "./src/mrd.js",
     "./console": "./src/console.js",
-    "./dxkit": "./src/dxkit.js"
+    "./dxkit": "./src/dxkit.js",
+    "./catalog": "./src/catalog.js"
   },
   "scripts": {
     "test": "vitest run"

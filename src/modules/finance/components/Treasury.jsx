@@ -21,6 +21,7 @@ import { FormDialog } from '../../dx-kit/FormDialog.jsx';
 import { KpiRow } from '../../dx-kit/KpiRow.jsx';
 import { QueryView } from '../../dx-kit/QueryView.jsx';
 import { useFinAccountsQuery, useFinLedgerQuery, useFinLedgerWriteMutation } from '../api.js';
+import { useAccountName } from '../accountName.js';
 
 const istToday = () => new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 10);
 const STATUS_TONE = { UNMATCHED: 'warning', MATCHED: 'success', IGNORED: 'neutral' };
@@ -202,6 +203,7 @@ function Reconciliation() {
 
 /** Bank reconciliation: import the statement, match, book the bank's own entries, reconcile. */
 export function BankRecTab() {
+  const acctName = useAccountName();
   const { t } = useTranslation();
   const { toast } = useToast();
   const can = useCan();
@@ -355,7 +357,7 @@ export function BankRecTab() {
             required: true,
             options: (accounts.data?.items ?? [])
               .filter((a) => a.isActive && a.key !== 'BANK')
-              .map((a) => ({ value: a.id, label: `${a.code} ${a.name}` })),
+              .map((a) => ({ value: a.id, label: `${a.code} ${acctName(a.code, a.name)}` })),
           },
           { name: 'narration', label: t('fin.tr.narration'), required: true },
         ]}

@@ -15,6 +15,7 @@ import {
   istHour,
 } from '@hms/ui';
 import { canOpen, menuFor, panelKeys } from '../../app/access.js';
+import { catalogFor, localizeMenu } from '../../app/catalogText.js';
 import { selectSession } from '../../app/session.js';
 import { useStrings } from '../../lib/useStrings.js';
 import { useUrlState } from '../../lib/useUrlState.js';
@@ -30,14 +31,14 @@ function greetingKey(hour) {
 
 /** The areas the user's menu opens, as shortcuts under the role's widgets. */
 function Areas({ session }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const groups = useMemo(
     () =>
-      menuFor(session)
+      localizeMenu(menuFor(session), i18n.language)
         .map((g) => ({ ...g, items: g.items.filter((it) => !it.route.includes(':')) }))
         .filter((g) => g.items.length),
-    [session],
+    [session, i18n.language],
   );
   if (!groups.length) return <p className="text-muted">{t('home.noMenu')}</p>;
   return (
@@ -140,7 +141,7 @@ export default function HomePage() {
                 p === panel ? 'bg-surface text-ink shadow-card' : 'text-muted hover:text-ink',
               )}
             >
-              {PANELS[p].name}
+              {catalogFor(i18n.language).panel(p, PANELS[p].name)}
             </button>
           ))}
         </div>

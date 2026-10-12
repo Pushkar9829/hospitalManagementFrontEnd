@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Keyboard, LogOut, Palette, Languages } from 'lucide-react';
 import { PANELS } from '@hms/shared/catalog';
 import { LANGUAGES } from '@hms/i18n';
+import { catalogFor, localizeMenu } from '../catalogText.js';
 import {
   AppShell,
   CommandPalette,
@@ -85,7 +86,8 @@ export function AppLayout() {
     skipPollingIfUnfocused: true,
   });
   const waiting = approvalCount?.inbox ?? 0;
-  const baseMenu = useMemo(() => menuFor(data), [data]);
+  const baseMenu = useMemo(() => localizeMenu(menuFor(data), language), [data, language]);
+  const cat = catalogFor(language);
   const menu = useMemo(
     () =>
       waiting
@@ -105,10 +107,12 @@ export function AppLayout() {
     [baseMenu, waiting, t],
   );
   const panels = panelKeys(data).map((k) => PANELS[k]);
-  const panelName = panels.map((p) => p.name).join(', ');
+  const panelName = panelKeys(data)
+    .map((k, i) => cat.panel(k, panels[i].name))
+    .join(', ');
   const active = findActiveItem(menu, location.pathname);
   const route = screenForPath(location.pathname);
-  const title = active?.label ?? route?.screen.title ?? '';
+  const title = active?.label ?? (route ? cat.screen(route.key, route.screen.title) : '');
   const group = active ? menu.find((g) => g.items.includes(active))?.group : null;
 
   const go = useCallback(
@@ -282,7 +286,9 @@ export function AppLayout() {
           onBranchChange={onBranchChange}
           user={{
             name: data.user.name,
-            subtitle: data.user.designation ?? data.user.roles.map((r) => r.name).join(', '),
+            subtitle:
+              data.user.designation ??
+              data.user.roles.map((r) => cat.panel(r.panel, r.name)).join(', '),
           }}
           theme={theme}
           onThemeChange={setTheme}

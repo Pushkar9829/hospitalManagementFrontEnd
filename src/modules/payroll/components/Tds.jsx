@@ -12,7 +12,7 @@ import {
   StatusBadge,
   useToast,
 } from '@hms/ui';
-import { fmtMonth, localeOf } from '../../dx-kit/format.js';
+import { fmtDate, fmtMonth, localeOf } from '../../dx-kit/format.js';
 import { fyOf, fyOptions } from './fy.js';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice.jsx';
 import { PdfPreviewDialog } from '../../../components/PdfPreviewDialog.jsx';
@@ -115,7 +115,7 @@ function MonthsCard({ fy }) {
                     <span className="text-sm">
                       {inr(c.amount)}{' '}
                       <span className="font-mono text-muted">
-                        {c.bsrCode}/{c.challanSerial} · {c.depositedOn}
+                        {c.bsrCode}/{c.challanSerial} · {fmtDate(c.depositedOn, localeOf(i18n))}
                       </span>
                     </span>
                   ) : (
@@ -123,7 +123,11 @@ function MonthsCard({ fy }) {
                   );
                 },
               },
-              { id: 'due', header: t('pay.tds.due'), cell: ({ row }) => row.original.due },
+              {
+                id: 'due',
+                header: t('pay.tds.due'),
+                cell: ({ row }) => fmtDate(row.original.due, localeOf(i18n)),
+              },
               {
                 id: 'state',
                 header: t('common.status'),

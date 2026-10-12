@@ -220,7 +220,7 @@ describe('Patient profile', () => {
   it('shows the banner, flags and the timeline in IST, tabs in the URL', async () => {
     const { user, router } = setup({}, `/patients/${ID}`);
     const banner = await screen.findByRole('region', { name: 'Patient: Ravi Kumar' });
-    expect(banner).toHaveTextContent('64Y');
+    expect(banner).toHaveTextContent('64 Y');
     expect(banner).toHaveTextContent('CC0000123');
     expect(banner).toHaveTextContent('Penicillin');
     expect(banner).toHaveTextContent('Senior citizen (60+)');

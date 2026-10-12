@@ -22,6 +22,7 @@ import { KpiRow } from '../../dx-kit/KpiRow.jsx';
 import { QueryView } from '../../dx-kit/QueryView.jsx';
 import { fmtDate, localeOf } from '../../dx-kit/format.js';
 import { useFinAccountsQuery, useFinLedgerQuery, useFinLedgerWriteMutation } from '../api.js';
+import { useAccountName } from '../accountName.js';
 
 const istToday = () => new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 10);
 const MODES = ['BANK_TRANSFER', 'CHEQUE', 'CASH'];
@@ -321,6 +322,7 @@ export function ReceivablesTab() {
 // ---------------------------------------------------------------- budgets
 
 export function BudgetsTab() {
+  const acctName = useAccountName();
   const { t } = useTranslation();
   const { toast } = useToast();
   const can = useCan();
@@ -359,7 +361,8 @@ export function BudgetsTab() {
                   {
                     id: 'ledger',
                     header: t('fin.led.bud.ledger'),
-                    cell: ({ row }) => `${row.original.code} · ${row.original.name}`,
+                    cell: ({ row }) =>
+                      `${row.original.code} · ${acctName(row.original.code, row.original.name)}`,
                   },
                   {
                     id: 'budget',
@@ -434,6 +437,7 @@ export function BudgetsTab() {
 const PETTY_TONE = { POSTED: 'success', PENDING_APPROVAL: 'warning', REJECTED: 'critical' };
 
 export function PettyCashTab() {
+  const acctName = useAccountName();
   const { t, i18n } = useTranslation();
   const locale = localeOf(i18n);
   const { toast } = useToast();
@@ -573,7 +577,10 @@ export function PettyCashTab() {
             type: 'select',
             options: [
               { value: '', label: '' },
-              ...heads.map((a) => ({ value: a.id, label: `${a.code} · ${a.name}` })),
+              ...heads.map((a) => ({
+                value: a.id,
+                label: `${a.code} · ${acctName(a.code, a.name)}`,
+              })),
             ],
           },
           { name: 'payee', label: t('fin.led.petty.payee'), required: true },

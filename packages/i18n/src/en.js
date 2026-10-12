@@ -260,6 +260,8 @@ export const en = {
     weight: 'Weight',
     weightKg: '{{value}} kg',
     age: '{{value}} Y',
+    ageMonths: '{{value}} M',
+    ageDays: '{{value}} D',
     sex: { M: 'Male', F: 'Female', O: 'Other', U: 'Not disclosed' },
     sexShort: { M: 'M', F: 'F', O: 'O', U: 'U' },
   },

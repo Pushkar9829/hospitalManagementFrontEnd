@@ -107,6 +107,7 @@ export const catalogHi = Object.freeze({
     Roster: { Rosters: 'रोस्टर' },
     Lab: { Laboratory: 'प्रयोगशाला', Worklists: 'वर्कलिस्ट' },
     LabSample: { 'Sample Collection': 'सैंपल संग्रह' },
+    PhleboPhone: { 'Home Collection': 'घर से सैंपल संग्रह', 'Home Visits': 'घर विज़िट' },
     LabConfig: { 'Lab Settings': 'लैब सेटिंग्स' },
     Radiology: { Radiology: 'रेडियोलॉजी', 'Worklist and Reporting': 'वर्कलिस्ट और रिपोर्टिंग' },
     Pharmacy: { Pharmacy: 'फ़ार्मेसी', Dispensing: 'दवा वितरण' },

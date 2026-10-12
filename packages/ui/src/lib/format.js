@@ -64,3 +64,16 @@ export function initials(name = '') {
     .filter(Boolean);
   return ((parts[0]?.[0] ?? '') + (parts.length > 1 ? parts.at(-1)[0] : '')).toUpperCase();
 }
+
+const AGE_UNIT = { Y: 'patient.age', M: 'patient.ageMonths', D: 'patient.ageDays' };
+
+/**
+ * An age in the reader's language: a number of years, or the case-sheet form the API sends
+ * ("47Y", "14M" under two years, "12D" under a month). Anything else is shown as it is.
+ */
+export function ageText(t, age) {
+  if (age == null || age === '') return null;
+  if (typeof age === 'number') return t('patient.age', { value: age });
+  const m = String(age).match(/^(\d+)\s*([YMD])$/i);
+  return m ? t(AGE_UNIT[m[2].toUpperCase()], { value: Number(m[1]) }) : age;
+}

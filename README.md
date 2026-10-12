@@ -37,4 +37,4 @@ be running; see the backend README for its database, seed data and demo logins.
 ## Deploy
 
 `vercel.json` builds with Vite and rewrites `/api` and `/socket.io` to the API on Render
-(`https://hms-api.onrender.com`). Change that address there if the API runs elsewhere.
+(`https://hospitalmanagementbackend-znr2.onrender.com`). Change that address there if the API runs elsewhere.

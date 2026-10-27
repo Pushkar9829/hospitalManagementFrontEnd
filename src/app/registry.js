@@ -44,6 +44,7 @@ const RoundsPage = lazy(() => import('../modules/ipd/pages/RoundsPage.jsx'));
 const NursingPage = lazy(() => import('../modules/ipd/pages/NursingPage.jsx'));
 const DischargePage = lazy(() => import('../modules/ipd/pages/DischargePage.jsx'));
 const TpaDeskPage = lazy(() => import('../modules/ipd/pages/TpaDeskPage.jsx'));
+const PmjayDeskPage = lazy(() => import('../modules/pmjay/pages/PmjayDeskPage.jsx'));
 const IpdBillPage = lazy(() => import('../modules/ipd/pages/IpdBillPage.jsx'));
 const IpdSettingsPage = lazy(() => import('../modules/ipd/pages/IpdSettingsPage.jsx'));
 const IpdAnalyticsPage = lazy(() => import('../modules/ipd/pages/IpdAnalyticsPage.jsx'));
@@ -111,6 +112,7 @@ export const PAGES = {
   Nursing: NursingPage,
   Discharge: DischargePage,
   IpdTpa: TpaDeskPage,
+  PmjayDesk: PmjayDeskPage,
   IpdBill: IpdBillPage,
   IpdConfig: IpdSettingsPage,
   IpdAnalytics: IpdAnalyticsPage,

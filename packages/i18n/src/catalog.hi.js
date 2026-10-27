@@ -42,6 +42,7 @@ export const catalogHi = Object.freeze({
     Discharge: 'डिस्चार्ज डेस्क',
     IpdBedRequests: 'बेड अनुरोध और स्थानांतरण',
     IpdTpa: 'बीमा और टीपीए डेस्क',
+    PmjayDesk: 'पीएम-जय कैशलेस डेस्क',
     IpdBill: 'भर्ती मरीज़ बिल',
     IpdConfig: 'आईपीडी सेटिंग्स',
     IpdAnalytics: 'आईपीडी विश्लेषण',
@@ -119,6 +120,7 @@ export const catalogHi = Object.freeze({
     },
     IpdBill: { 'In-patient Bills': 'भर्ती मरीज़ बिल' },
     IpdTpa: { 'Insurance Desk': 'बीमा डेस्क' },
+    PmjayDesk: { 'PM-JAY Desk': 'पीएम-जय डेस्क' },
     BillCorporate: { 'Corporate and Credit': 'कॉरपोरेट और उधार' },
     Finance: { Finance: 'वित्त' },
     Inventory: {
@@ -236,6 +238,7 @@ export const catalogHi = Object.freeze({
     FAC: 'हाउसकीपिंग और सुविधा',
     QLT: 'गुणवत्ता और घटनाएँ',
     CRM: 'मरीज़ सीआरएम',
+    PMJ: 'आयुष्मान भारत पीएम-जय कैशलेस',
   },
   panels: {
     superadmin: { name: 'सुपर एडमिन', scope: 'पूरा अस्पताल, सभी शाखाएँ' },

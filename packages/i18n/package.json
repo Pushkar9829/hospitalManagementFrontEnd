@@ -27,6 +27,7 @@
     "./mrd": "./src/mrd.js",
     "./console": "./src/console.js",
     "./dxkit": "./src/dxkit.js",
+    "./pmjay": "./src/pmjay.js",
     "./catalog": "./src/catalog.js"
   },
   "scripts": {
